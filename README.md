@@ -2,6 +2,20 @@
 
 Aplicativo Flutter responsivo para web, Android e iOS.
 
+[![Abrir o app](https://img.shields.io/badge/Abrir%20o%20app-Atlas-0875C9?style=for-the-badge)](https://leohamil31.github.io/ATLAS-LOG-/)
+[![Deploy](https://github.com/leohamil31/ATLAS-LOG-/actions/workflows/pages.yml/badge.svg)](https://github.com/leohamil31/ATLAS-LOG-/actions/workflows/pages.yml)
+
+## Acesse online
+
+**https://leohamil31.github.io/ATLAS-LOG-/**
+
+Abra o link em qualquer navegador, no computador ou no celular. No iPhone,
+use o Safari, toque em Compartilhar e depois em **Adicionar à Tela de Início**
+para usar como aplicativo.
+
+Para entrar, escolha o perfil **Administrador** ou **Colaborador** na tela de
+login (dados de demonstração).
+
 ## Executar no VS Code
 
 Instale as extensões **Flutter** e **Dart**, abra esta pasta no VS Code e rode
