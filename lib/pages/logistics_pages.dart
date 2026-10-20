@@ -1402,6 +1402,13 @@ class _DriverCard extends StatelessWidget {
       context: context,
       builder: (context) => DialogShell(
         title: 'Rota otimizada · ${driver.nome}',
+        actions: [
+          Button3D(
+            label: 'Fechar',
+            secondary: true,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1419,7 +1426,6 @@ class _DriverCard extends StatelessWidget {
             Text('Sequência calculada por vizinho mais próximo e refinamento 2-opt. Distâncias são aproximadas.', style: TextStyle(color: context.ac.muted, fontSize: 11)),
           ],
         ),
-        actions: [Button3D(label: 'Fechar', secondary: true, onPressed: () => Navigator.pop(context))],
       ),
     );
   }

@@ -26,7 +26,11 @@ Future<bool> confirmDialog(
       title: title,
       maxWidth: 440,
       actions: [
-        Button3D(label: 'Voltar', secondary: true, onPressed: () => Navigator.pop(ctx, false)),
+        Button3D(
+          label: 'Voltar',
+          secondary: true,
+          onPressed: () => Navigator.pop(ctx, false),
+        ),
         Button3D(
           label: confirmLabel,
           icon: Icons.delete_rounded,
@@ -42,7 +46,11 @@ Future<bool> confirmDialog(
 
 // ----------------------------------------------------------------- formulário
 
-Future<void> showOrderForm(BuildContext context, AtlasStore store, {Order? order}) {
+Future<void> showOrderForm(
+  BuildContext context,
+  AtlasStore store, {
+  Order? order,
+}) {
   return showDialog<void>(
     context: context,
     builder: (_) => _OrderForm(store: store, order: order),
@@ -70,7 +78,9 @@ class _OrderFormState extends State<_OrderForm> {
   late final _tel = TextEditingController(text: widget.order?.telefone);
   late DateTime _previsao =
       widget.order?.previsaoEntrega ??
-      widget.store.now.add(Duration(days: widget.store.settings.defaultDeliveryDays));
+      widget.store.now.add(
+        Duration(days: widget.store.settings.defaultDeliveryDays),
+      );
 
   bool get _editing => widget.order != null;
 
@@ -124,7 +134,8 @@ class _OrderFormState extends State<_OrderForm> {
     return true;
   }
 
-  String? _required(String? v) => (v == null || v.trim().isEmpty) ? 'Campo obrigatório' : null;
+  String? _required(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Campo obrigatório' : null;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +143,11 @@ class _OrderFormState extends State<_OrderForm> {
     return DialogShell(
       title: _editing ? 'Editar ${widget.order!.id}' : 'Novo pedido',
       actions: [
-        Button3D(label: 'Cancelar', secondary: true, onPressed: () => Navigator.pop(context)),
+        Button3D(
+          label: 'Cancelar',
+          secondary: true,
+          onPressed: () => Navigator.pop(context),
+        ),
         Button3D(
           label: 'Salvar',
           icon: Icons.save_rounded,
@@ -141,8 +156,9 @@ class _OrderFormState extends State<_OrderForm> {
             final ok = _save();
             if (ok) {
               // Fecha após o feedback de sucesso.
+              final navigator = Navigator.of(context);
               Future<void>.delayed(const Duration(milliseconds: 650), () {
-                if (mounted) Navigator.pop(context);
+                if (mounted) navigator.pop();
               });
             }
             return ok;
@@ -156,19 +172,28 @@ class _OrderFormState extends State<_OrderForm> {
             TextFormField(
               controller: _cliente,
               validator: _required,
-              decoration: const InputDecoration(labelText: 'Cliente', prefixIcon: Icon(Icons.business_rounded)),
+              decoration: const InputDecoration(
+                labelText: 'Cliente',
+                prefixIcon: Icon(Icons.business_rounded),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _origem,
               validator: _required,
-              decoration: const InputDecoration(labelText: 'Origem', prefixIcon: Icon(Icons.trip_origin_rounded)),
+              decoration: const InputDecoration(
+                labelText: 'Origem',
+                prefixIcon: Icon(Icons.trip_origin_rounded),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _destino,
               validator: _required,
-              decoration: const InputDecoration(labelText: 'Destino', prefixIcon: Icon(Icons.place_rounded)),
+              decoration: const InputDecoration(
+                labelText: 'Destino',
+                prefixIcon: Icon(Icons.place_rounded),
+              ),
             ),
             const SizedBox(height: 12),
             Row(
@@ -177,7 +202,10 @@ class _OrderFormState extends State<_OrderForm> {
                   child: TextFormField(
                     controller: _peso,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Peso (kg)', prefixIcon: Icon(Icons.scale_rounded)),
+                    decoration: const InputDecoration(
+                      labelText: 'Peso (kg)',
+                      prefixIcon: Icon(Icons.scale_rounded),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -185,7 +213,10 @@ class _OrderFormState extends State<_OrderForm> {
                   child: TextFormField(
                     controller: _tel,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(labelText: 'WhatsApp', prefixIcon: Icon(Icons.chat_rounded)),
+                    decoration: const InputDecoration(
+                      labelText: 'WhatsApp',
+                      prefixIcon: Icon(Icons.chat_rounded),
+                    ),
                   ),
                 ),
               ],
@@ -199,7 +230,10 @@ class _OrderFormState extends State<_OrderForm> {
                   labelText: 'Previsão de entrega',
                   prefixIcon: Icon(Icons.event_rounded),
                 ),
-                child: Text(fmtDate(_previsao), style: TextStyle(color: ac.text)),
+                child: Text(
+                  fmtDate(_previsao),
+                  style: TextStyle(color: ac.text),
+                ),
               ),
             ),
           ],
@@ -211,7 +245,11 @@ class _OrderFormState extends State<_OrderForm> {
 
 // -------------------------------------------------------------------- detalhes
 
-Future<void> showOrderDetails(BuildContext context, AtlasStore store, String orderId) {
+Future<void> showOrderDetails(
+  BuildContext context,
+  AtlasStore store,
+  String orderId,
+) {
   return showDialog<void>(
     context: context,
     builder: (_) => ListenableBuilder(
@@ -219,7 +257,10 @@ Future<void> showOrderDetails(BuildContext context, AtlasStore store, String ord
       builder: (ctx, _) {
         final order = store.orderById(orderId);
         if (order == null) {
-          return const DialogShell(title: 'Pedido', child: Text('Pedido não encontrado.'));
+          return const DialogShell(
+            title: 'Pedido',
+            child: Text('Pedido não encontrado.'),
+          );
         }
         return _OrderDetails(store: store, order: order);
       },
@@ -276,8 +317,16 @@ class _OrderDetailsState extends State<_OrderDetails> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 92, child: Text(label, style: TextStyle(color: ac.muted, fontSize: 13))),
-          Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600))),
+          SizedBox(
+            width: 92,
+            child: Text(label, style: TextStyle(color: ac.muted, fontSize: 13)),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
         ],
       ),
     );
@@ -333,7 +382,8 @@ class _OrderDetailsState extends State<_OrderDetails> {
             spacing: 8,
             children: [
               StatusChip(status: o.status),
-              if (late) const StatusChip(status: OrderStatus.pendente, late: true),
+              if (late)
+                const StatusChip(status: OrderStatus.pendente, late: true),
             ],
           ),
           const SizedBox(height: 14),
@@ -352,12 +402,26 @@ class _OrderDetailsState extends State<_OrderDetails> {
             Container(
               height: 90,
               margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: CustomPaint(size: Size.infinite, painter: SignaturePainter(o.pod!.assinatura)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: SignaturePainter(o.pod!.assinatura),
+              ),
             ),
-          info('Motorista', driver == null ? 'Não vinculado' : '${driver.nome} - ${driver.veiculo} (${driver.placa})'),
+          info(
+            'Motorista',
+            driver == null
+                ? 'Não vinculado'
+                : '${driver.nome} - ${driver.veiculo} (${driver.placa})',
+          ),
           const SizedBox(height: 10),
-          const Text('Rastreamento', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          const Text(
+            'Rastreamento',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 12),
           _timeline(ac, o),
           if (sel != null) ...[
@@ -377,7 +441,10 @@ class _OrderDetailsState extends State<_OrderDetails> {
             ),
           ],
           const SizedBox(height: 16),
-          const Text('Histórico', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          const Text(
+            'Histórico',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 8),
           for (final e in o.historico.reversed)
             Padding(
@@ -393,9 +460,14 @@ class _OrderDetailsState extends State<_OrderDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(e.label, style: const TextStyle(fontWeight: FontWeight.w700)),
                         Text(
-                          e.note.isEmpty ? fmtDateTime(e.date) : '${fmtDateTime(e.date)} - ${e.note}',
+                          e.label,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          e.note.isEmpty
+                              ? fmtDateTime(e.date)
+                              : '${fmtDateTime(e.date)} - ${e.note}',
                           style: TextStyle(color: ac.muted, fontSize: 12),
                         ),
                       ],
@@ -423,7 +495,8 @@ class _OrderDetailsState extends State<_OrderDetails> {
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => setState(() => _selected = _selected == i ? null : i),
+                  onTap: () =>
+                      setState(() => _selected = _selected == i ? null : i),
                   child: Column(
                     children: [
                       Row(
@@ -433,7 +506,9 @@ class _OrderDetailsState extends State<_OrderDetails> {
                               height: 3,
                               color: i == 0
                                   ? Colors.transparent
-                                  : (i <= o.stage && !cancelled ? ac.success : ac.border),
+                                  : (i <= o.stage && !cancelled
+                                        ? ac.success
+                                        : ac.border),
                             ),
                           ),
                           Icon3D(
@@ -451,7 +526,9 @@ class _OrderDetailsState extends State<_OrderDetails> {
                               height: 3,
                               color: i == kStages.length - 1
                                   ? Colors.transparent
-                                  : (i < o.stage && !cancelled ? ac.success : ac.border),
+                                  : (i < o.stage && !cancelled
+                                        ? ac.success
+                                        : ac.border),
                             ),
                           ),
                         ],
@@ -462,7 +539,9 @@ class _OrderDetailsState extends State<_OrderDetails> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: i == o.stage ? FontWeight.w800 : FontWeight.w500,
+                          fontWeight: i == o.stage
+                              ? FontWeight.w800
+                              : FontWeight.w500,
                           color: i <= o.stage ? ac.text : ac.muted,
                         ),
                       ),
@@ -488,7 +567,8 @@ Future<void> showAssignDialog(
 }) {
   return showDialog<void>(
     context: context,
-    builder: (_) => _AssignDialog(store: store, orderId: orderId, driverId: driverId),
+    builder: (_) =>
+        _AssignDialog(store: store, orderId: orderId, driverId: driverId),
   );
 }
 
@@ -529,13 +609,19 @@ class _AssignDialogState extends State<_AssignDialog> {
     final ac = context.ac;
     final store = widget.store;
     final active = store.orders.where((o) => o.isActive).toList();
-    final drivers = store.drivers.where((d) => d.status != DriverStatus.manutencao).toList();
+    final drivers = store.drivers
+        .where((d) => d.status != DriverStatus.manutencao)
+        .toList();
 
     return DialogShell(
       title: 'Vincular carga',
       maxWidth: 520,
       actions: [
-        Button3D(label: 'Cancelar', secondary: true, onPressed: () => Navigator.pop(context)),
+        Button3D(
+          label: 'Cancelar',
+          secondary: true,
+          onPressed: () => Navigator.pop(context),
+        ),
         Button3D(
           label: 'Vincular carga',
           icon: Icons.link_rounded,
@@ -546,17 +632,26 @@ class _AssignDialogState extends State<_AssignDialog> {
       child: Column(
         children: [
           if (active.isEmpty)
-            Text('Não há pedidos em andamento.', style: TextStyle(color: ac.muted))
+            Text(
+              'Não há pedidos em andamento.',
+              style: TextStyle(color: ac.muted),
+            )
           else
             DropdownButtonFormField<String>(
               initialValue: active.any((o) => o.id == _order) ? _order : null,
               isExpanded: true,
-              decoration: const InputDecoration(labelText: 'Pedido', prefixIcon: Icon(Icons.inventory_2_rounded)),
+              decoration: const InputDecoration(
+                labelText: 'Pedido',
+                prefixIcon: Icon(Icons.inventory_2_rounded),
+              ),
               items: [
                 for (final o in active)
                   DropdownMenuItem(
                     value: o.id,
-                    child: Text('${o.id} - ${o.cliente}', overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      '${o.id} - ${o.cliente}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
               ],
               onChanged: (v) => setState(() {
@@ -568,12 +663,18 @@ class _AssignDialogState extends State<_AssignDialog> {
           DropdownButtonFormField<String>(
             initialValue: drivers.any((d) => d.id == _driver) ? _driver : null,
             isExpanded: true,
-            decoration: const InputDecoration(labelText: 'Motorista / veículo', prefixIcon: Icon(Icons.local_shipping_rounded)),
+            decoration: const InputDecoration(
+              labelText: 'Motorista / veículo',
+              prefixIcon: Icon(Icons.local_shipping_rounded),
+            ),
             items: [
               for (final d in drivers)
                 DropdownMenuItem(
                   value: d.id,
-                  child: Text('${d.nome} - ${d.placa} (${d.status.label})', overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    '${d.nome} - ${d.placa} (${d.status.label})',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
             ],
             onChanged: (v) => setState(() {
@@ -587,7 +688,9 @@ class _AssignDialogState extends State<_AssignDialog> {
               children: [
                 Icon(Icons.error_rounded, color: ac.danger, size: 18),
                 const SizedBox(width: 8),
-                Expanded(child: Text(_error!, style: TextStyle(color: ac.danger))),
+                Expanded(
+                  child: Text(_error!, style: TextStyle(color: ac.danger)),
+                ),
               ],
             ),
           ],
@@ -599,7 +702,11 @@ class _AssignDialogState extends State<_AssignDialog> {
 
 // -------------------------------------------------------------- form motorista
 
-Future<void> showDriverForm(BuildContext context, AtlasStore store, {Driver? driver}) {
+Future<void> showDriverForm(
+  BuildContext context,
+  AtlasStore store, {
+  Driver? driver,
+}) {
   return showDialog<void>(
     context: context,
     builder: (_) => _DriverForm(store: store, driver: driver),
@@ -636,9 +743,20 @@ class _DriverFormState extends State<_DriverForm> {
     if (!_key.currentState!.validate()) return false;
     final d = widget.driver;
     if (d == null) {
-      widget.store.addDriver(nome: _nome.text, veiculo: _veiculo.text, placa: _placa.text, telefone: _tel.text);
+      widget.store.addDriver(
+        nome: _nome.text,
+        veiculo: _veiculo.text,
+        placa: _placa.text,
+        telefone: _tel.text,
+      );
     } else {
-      widget.store.updateDriver(d.id, nome: _nome.text, veiculo: _veiculo.text, placa: _placa.text, telefone: _tel.text);
+      widget.store.updateDriver(
+        d.id,
+        nome: _nome.text,
+        veiculo: _veiculo.text,
+        placa: _placa.text,
+        telefone: _tel.text,
+      );
     }
     Future<void>.delayed(const Duration(milliseconds: 650), () {
       if (mounted) Navigator.pop(context);
@@ -646,7 +764,8 @@ class _DriverFormState extends State<_DriverForm> {
     return true;
   }
 
-  String? _required(String? v) => (v == null || v.trim().isEmpty) ? 'Campo obrigatório' : null;
+  String? _required(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Campo obrigatório' : null;
 
   @override
   Widget build(BuildContext context) {
@@ -654,20 +773,58 @@ class _DriverFormState extends State<_DriverForm> {
       title: widget.driver == null ? 'Novo motorista' : 'Editar motorista',
       maxWidth: 500,
       actions: [
-        Button3D(label: 'Cancelar', secondary: true, onPressed: () => Navigator.pop(context)),
-        Button3D(label: 'Salvar', icon: Icons.save_rounded, successLabel: 'Salvo!', onAction: _save),
+        Button3D(
+          label: 'Cancelar',
+          secondary: true,
+          onPressed: () => Navigator.pop(context),
+        ),
+        Button3D(
+          label: 'Salvar',
+          icon: Icons.save_rounded,
+          successLabel: 'Salvo!',
+          onAction: _save,
+        ),
       ],
       child: Form(
         key: _key,
         child: Column(
           children: [
-            TextFormField(controller: _nome, validator: _required, decoration: const InputDecoration(labelText: 'Nome', prefixIcon: Icon(Icons.person_rounded))),
+            TextFormField(
+              controller: _nome,
+              validator: _required,
+              decoration: const InputDecoration(
+                labelText: 'Nome',
+                prefixIcon: Icon(Icons.person_rounded),
+              ),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _veiculo, validator: _required, decoration: const InputDecoration(labelText: 'Veículo', prefixIcon: Icon(Icons.local_shipping_rounded))),
+            TextFormField(
+              controller: _veiculo,
+              validator: _required,
+              decoration: const InputDecoration(
+                labelText: 'Veículo',
+                prefixIcon: Icon(Icons.local_shipping_rounded),
+              ),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _placa, validator: _required, textCapitalization: TextCapitalization.characters, decoration: const InputDecoration(labelText: 'Placa', prefixIcon: Icon(Icons.pin_rounded))),
+            TextFormField(
+              controller: _placa,
+              validator: _required,
+              textCapitalization: TextCapitalization.characters,
+              decoration: const InputDecoration(
+                labelText: 'Placa',
+                prefixIcon: Icon(Icons.pin_rounded),
+              ),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _tel, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Telefone', prefixIcon: Icon(Icons.phone_rounded))),
+            TextFormField(
+              controller: _tel,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: 'Telefone',
+                prefixIcon: Icon(Icons.phone_rounded),
+              ),
+            ),
           ],
         ),
       ),

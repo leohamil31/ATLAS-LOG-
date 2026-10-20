@@ -445,10 +445,11 @@ class SettingsPage extends StatelessWidget {
                       DropdownMenuItem(value: day, child: Text('$day dias')),
                   ],
                   onChanged: (value) {
-                    if (value != null)
+                    if (value != null) {
                       store.updateSettings(
                         (settings) => settings.defaultDeliveryDays = value,
                       );
+                    }
                   },
                 ),
               ),
@@ -501,8 +502,9 @@ class SettingsPage extends StatelessWidget {
                       ),
                   ],
                   onChanged: (driverId) {
-                    if (driverId != null)
+                    if (driverId != null) {
                       store.setRole(UserRole.motorista, driverId: driverId);
+                    }
                   },
                 ),
               ],
@@ -533,18 +535,20 @@ class SettingsPage extends StatelessWidget {
                           'atlas-backup.json',
                           store.exportBackup(),
                         );
-                        if (context.mounted)
+                        if (context.mounted) {
                           toast(context, 'Backup JSON exportado.');
+                        }
                         return true;
                       } catch (error, stackTrace) {
                         debugPrint('Falha ao exportar backup JSON: $error');
                         debugPrintStack(stackTrace: stackTrace);
-                        if (context.mounted)
+                        if (context.mounted) {
                           toast(
                             context,
                             'Falha ao exportar backup: $error',
                             error: true,
                           );
+                        }
                         return false;
                       }
                     },
@@ -564,8 +568,9 @@ class SettingsPage extends StatelessWidget {
                       );
                       if (confirmed) {
                         store.resetData();
-                        if (context.mounted)
+                        if (context.mounted) {
                           toast(context, 'Dados de demonstração restaurados.');
+                        }
                       }
                     },
                   ),
