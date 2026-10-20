@@ -1,70 +1,55 @@
-# Atlas
+# ATLAS-LOG
 
-Aplicativo Flutter responsivo para web, Android e iOS.
+Dashboard responsivo de demonstração para gestão de pedidos, rastreamento e
+operação logística. O app Flutter funciona na web, Android e iOS.
 
-[![Abrir o app](https://img.shields.io/badge/Abrir%20o%20app-Atlas-0875C9?style=for-the-badge)](https://leohamil31.github.io/ATLAS-LOG-/)
-[![Deploy](https://github.com/leohamil31/ATLAS-LOG-/actions/workflows/pages.yml/badge.svg)](https://github.com/leohamil31/ATLAS-LOG-/actions/workflows/pages.yml)
+## Funcionalidades
 
-## Acesse online
+- Dashboard com KPIs, fluxo diário, distribuição por status, atividade e alertas.
+- Cadastro, edição, busca, filtro, rastreamento e cancelamento de pedidos.
+- Timeline de rastreio, etiqueta com QR Code/código de barras, simulador de
+  frete e atalho para WhatsApp.
+- Cadastro de motoristas, vínculo de cargas, mapa de posições estimadas e
+  sugestão de sequência de paradas.
+- Relatórios CSV/PDF, indicadores financeiros demonstrativos e backup JSON.
+- Preferências, tema escuro, notificações e troca demonstrativa de perfil.
+- Página pública de rastreio em `/rastreio?codigo=ATL-2400`.
+- PWA instalável com cache de recursos do Flutter e dados operacionais salvos
+  localmente no dispositivo.
 
-**https://leohamil31.github.io/ATLAS-LOG-/**
+## Executar
 
-Abra o link em qualquer navegador, no computador ou no celular. No iPhone,
-use o Safari, toque em Compartilhar e depois em **Adicionar à Tela de Início**
-para usar como aplicativo.
-
-Para entrar, escolha o perfil **Administrador** ou **Colaborador** na tela de
-login (dados de demonstração).
-
-## Executar no VS Code
-
-Instale as extensões **Flutter** e **Dart**, abra esta pasta no VS Code e rode
-no terminal:
+Na pasta `guindastesribas_flutter`:
 
 ```powershell
 flutter pub get
 flutter run -d chrome
 ```
 
-Para Android, instale o Android Studio e as Android SDK Command-line Tools,
-aceite as licenças com `flutter doctor --android-licenses` e execute `flutter
-run` com um emulador ou aparelho conectado.
-
-Para compilar o app iOS nativo, é necessário usar macOS com Xcode. No Windows,
-é possível testar a versão web no navegador do iPhone, mas não gerar um
-instalador iOS.
-
-## Publicar no GitHub Pages
-
-1. Use o repositório [leohamil31/ATLAS-LOG-](https://github.com/leohamil31/ATLAS-LOG-).
-2. Envie **o conteúdo desta pasta** para a raiz do repositório.
-3. No GitHub, abra **Settings → Pages** e escolha **GitHub Actions** como
-   origem de publicação.
-4. Envie a branch `main`. O workflow em `.github/workflows/pages.yml` testa e
-   compila o app Flutter e publica o site automaticamente.
-5. Se a primeira execução terminou antes de o Pages ser habilitado, abra
-   **Actions → Publish Atlas to GitHub Pages** e selecione **Re-run jobs**.
-
-Como o repositório está vazio, execute no terminal desta pasta:
+Para testar e compilar a versão web:
 
 ```powershell
-git init -b main
-git add .
-git commit -m "Publica o app Atlas"
-git remote add origin https://github.com/leohamil31/ATLAS-LOG-.git
-git push -u origin main
+flutter test
+flutter analyze
+flutter build web
 ```
 
-Depois da execução bem-sucedida do workflow, o site ficará disponível em
-`https://leohamil31.github.io/ATLAS-LOG-/`.
+## Demonstração e limitações
 
-## Escopo da demonstração
+Entre com qualquer nome e perfil de demonstração. Os pedidos, motoristas,
+configurações e notificações são mantidos no armazenamento local do navegador
+ou dispositivo. Use **Configurações → Exportar backup JSON** para baixar uma
+cópia e **Resetar dados de teste** para restaurar o conjunto de exemplo.
 
-Login por perfil, navegação, dashboard, operações, checklist, cadastro de
-veículos, documentos, manutenção, carteira, notificações, usuários, financeiro,
-relatórios e tema claro/escuro estão disponíveis com dados de exemplo mantidos
-na memória durante a sessão.
+O mapa mostra posições aproximadas derivadas das cidades conhecidas e precisa
+de conexão para carregar os mapas do OpenStreetMap. O otimizador usa distâncias
+aproximadas em linha reta; não é um serviço de roteamento rodoviário. O
+assistente realiza buscas locais por linguagem simples e não chama um modelo
+externo. Perfis RBAC, login, notificações e comprovante de foto são
+demonstrativos; não substituem autenticação, armazenamento de arquivos ou
+backend de produção. No fluxo de POD, a assinatura é capturada localmente; a
+opção de foto simula a anexação.
 
-Autenticação real, sincronização e persistência, upload de documentos, GPS,
-leitura de QR pela câmera precisam ser conectados a serviços
-antes de uso em produção. Não informe dados ou senhas reais neste protótipo.
+O rastreamento público expõe somente o status e os dados logísticos que o app
+de demonstração possui. Não armazene informações reais de clientes sem
+integrar controles de acesso e um serviço seguro.
