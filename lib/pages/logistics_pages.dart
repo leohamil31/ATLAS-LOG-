@@ -703,39 +703,44 @@ class DashboardPage extends StatelessWidget {
         const SizedBox(height: 20),
         if (store.settings.role != UserRole.motorista)
           LayoutBuilder(
-            builder: (context, constraints) => Flex(
-              direction: constraints.maxWidth > 1050 ? Axis.horizontal : Axis.vertical,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _FlowChart(flow: flow),
-                ),
-                if (constraints.maxWidth > 1050)
-                  const SizedBox(width: 16)
-                else
-                  const SizedBox(height: 16),
-                Expanded(
-                  flex: 2,
-                  child: _StatusChart(store: store),
-                ),
-              ],
-            ),
+            builder: (context, constraints) => constraints.maxWidth > 1050
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 3, child: _FlowChart(flow: flow)),
+                      const SizedBox(width: 16),
+                      Expanded(flex: 2, child: _StatusChart(store: store)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _FlowChart(flow: flow),
+                      const SizedBox(height: 16),
+                      _StatusChart(store: store),
+                    ],
+                  ),
           ),
         const SizedBox(height: 18),
         LayoutBuilder(
-          builder: (context, constraints) => Flex(
-            direction: constraints.maxWidth > 1000 ? Axis.horizontal : Axis.vertical,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 3, child: _AlertPanel(alerts: alerts, store: store)),
-              if (constraints.maxWidth > 1000)
-                const SizedBox(width: 16)
-              else
-                const SizedBox(height: 16),
-              Expanded(flex: 2, child: _ActivityPanel(store: store)),
-            ],
-          ),
+          builder: (context, constraints) => constraints.maxWidth > 1000
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _AlertPanel(alerts: alerts, store: store),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(flex: 2, child: _ActivityPanel(store: store)),
+                  ],
+                )
+              : Column(
+                  children: [
+                    _AlertPanel(alerts: alerts, store: store),
+                    const SizedBox(height: 16),
+                    _ActivityPanel(store: store),
+                  ],
+                ),
         ),
       ],
     );
