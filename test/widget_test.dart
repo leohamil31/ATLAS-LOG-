@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atlas_app/main.dart';
@@ -27,14 +28,17 @@ void main() {
     expect(find.text('Total de envios'), findsOneWidget);
     expect(find.text('CENTRAL DE OPERAÇÕES'), findsOneWidget);
   });
+
   testWidgets('navigates to the searchable order list', (tester) async {
     await loadApp(tester);
     await tester.tap(find.text('Entrar no ambiente de teste'));
     await tester.pump();
 
-    await tester.tap(find.byTooltip('Abrir menu'));
-    await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.text('Pedidos').last);
+    final ordersDestination = find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text('Pedidos'),
+    );
+    await tester.tap(ordersDestination);
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Pedidos e rastreamento'), findsOneWidget);
