@@ -94,7 +94,9 @@ class _ReportsPageState extends State<ReportsPage> {
         .where((order) => order.status == OrderStatus.entregue)
         .fold<double>(0, (sum, order) => sum + _estimateFreight(order));
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         SectionHeader(
           title: 'Relatórios e indicadores',
@@ -300,7 +302,9 @@ class NotificationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.ac;
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         SectionHeader(
           title: 'Central de notificações',
@@ -386,7 +390,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.ac;
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         const SectionHeader(
           title: 'Configurações',

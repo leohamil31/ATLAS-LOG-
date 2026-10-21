@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atlas_app/main.dart';
+import 'package:atlas_app/widgets/atlas_logo_3d.dart';
 
 void main() {
   setUp(() {
@@ -43,5 +44,37 @@ void main() {
 
     expect(find.text('Pedidos e rastreamento'), findsOneWidget);
     expect(find.text('Buscar código, cliente ou destino...'), findsOneWidget);
+  });
+
+  testWidgets('keeps login, dashboard, and orders usable on a phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await loadApp(tester);
+    expect(find.byType(AtlasLogo3D), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Entrar no ambiente de teste'));
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump();
+    expect(find.text('Total de envios'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('Pedidos'),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump();
+    expect(find.text('Pedidos e rastreamento'), findsOneWidget);
+    expect(find.text('Buscar código, cliente ou destino...'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

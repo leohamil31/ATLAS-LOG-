@@ -110,17 +110,10 @@ class _LogisticsShellState extends State<LogisticsShell> {
                 final mobilePages = _mobilePages.where(_canSee).toList();
                 return Scaffold(
                   appBar: AppBar(
-                    title: Row(
-                      children: [
-                        const AtlasLogo3D(size: 34),
-                        const SizedBox(width: 9),
-                        Expanded(
-                          child: Text(
-                            _page == 'Dashboard' ? 'ATLAS-LOG' : _page,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    titleSpacing: 0,
+                    title: Text(
+                      _page == 'Dashboard' ? 'ATLAS-LOG' : _page,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     leading: Builder(
                       builder: (context) => IconButton(
@@ -154,6 +147,8 @@ class _LogisticsShellState extends State<LogisticsShell> {
                   body: body,
                   bottomNavigationBar: NavigationBar(
                     selectedIndex: _bottomIndex(mobilePages),
+                    labelBehavior:
+                        NavigationDestinationLabelBehavior.onlyShowSelected,
                     onDestinationSelected: (index) => _navigate(mobilePages[index]),
                     destinations: [
                       for (final page in mobilePages)
@@ -566,54 +561,86 @@ class DashboardPage extends StatelessWidget {
     final flow = store.flow(store.now.subtract(const Duration(days: 6)), store.now);
     final wide = MediaQuery.sizeOf(context).width >= 1100;
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         Glass(
           radius: 22,
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(
+            MediaQuery.sizeOf(context).width < 600 ? 18 : 24,
+          ),
           child: LayoutBuilder(
-            builder: (context, constraints) => Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        role == UserRole.motorista ? 'MINHAS ROTAS' : 'CENTRAL DE OPERAÇÕES',
-                        style: TextStyle(color: colors.accent, fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.w900),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Olá, ${store.settings.userName}',
-                        style: const TextStyle(fontSize: 27, fontWeight: FontWeight.w900),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        role == UserRole.motorista
-                            ? 'Acompanhe as entregas vinculadas ao seu perfil.'
-                            : 'Acompanhe pedidos, prazos e disponibilidade da frota.',
-                        style: TextStyle(color: colors.muted),
-                      ),
-                    ],
+            builder: (context, constraints) {
+              final greeting = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    role == UserRole.motorista
+                        ? 'MINHAS ROTAS'
+                        : 'CENTRAL DE OPERAÇÕES',
+                    style: TextStyle(
+                      color: colors.accent,
+                      fontSize: 11,
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                ),
-                if (constraints.maxWidth > 520) ...[
-                  const SizedBox(width: 20),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Olá, ${store.settings.userName}',
+                    style: const TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    role == UserRole.motorista
+                        ? 'Acompanhe as entregas vinculadas ao seu perfil.'
+                        : 'Acompanhe pedidos, prazos e disponibilidade da frota.',
+                    style: TextStyle(color: colors.muted),
+                  ),
+                ],
+              );
+              if (constraints.maxWidth <= 520) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    greeting,
+                    const SizedBox(height: 16),
+                    Button3D(
+                      label: 'Criar Pedido',
+                      icon: Icons.add_rounded,
+                      onPressed: () => showOrderForm(context, store),
+                    ),
+                  ],
+                );
+              }
+              return Row(
+              children: [
+                Expanded(child: greeting),
+                const SizedBox(width: 20),
+                if (role != UserRole.motorista)
                   Button3D(
                     label: 'Criar Pedido',
                     icon: Icons.add_rounded,
                     onPressed: () => showOrderForm(context, store),
                   ),
                 ],
-              ],
-            ),
+            );
+          },
           ),
         ),
         const SizedBox(height: 20),
         if (store.settings.role != UserRole.motorista)
           LayoutBuilder(
             builder: (context, constraints) {
-              final count = constraints.maxWidth > 1050 ? 4 : 2;
+              final count = constraints.maxWidth > 1050
+                  ? 4
+                  : constraints.maxWidth > 600
+                  ? 2
+                  : 1;
               final cards = [
                 KpiCard(
                   label: 'Total de envios',
@@ -656,7 +683,7 @@ class DashboardPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
-                childAspectRatio: wide ? 2.05 : 1.75,
+                childAspectRatio: count == 1 ? 3.2 : wide ? 2.05 : 1.75,
                 children: cards,
               );
             },
@@ -990,7 +1017,9 @@ class _OrdersPageState extends State<OrdersPage> {
           ? b.dataEnvio.compareTo(a.dataEnvio)
           : a.dataEnvio.compareTo(b.dataEnvio));
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         SectionHeader(
           title: 'Pedidos e rastreamento',
@@ -1015,42 +1044,59 @@ class _OrdersPageState extends State<OrdersPage> {
         const SizedBox(height: 18),
         GlassCard(
           padding: const EdgeInsets.all(14),
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              SizedBox(
-                width: 340,
-                child: TextField(
-                  controller: _search,
-                  onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(Icons.search_rounded),
-                    hintText: 'Buscar código, cliente ou destino...',
+          child: LayoutBuilder(
+            builder: (context, constraints) => Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                SizedBox(
+                  width: constraints.maxWidth < 340
+                      ? constraints.maxWidth
+                      : 340,
+                  child: TextField(
+                    controller: _search,
+                    onChanged: (_) => setState(() {}),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      prefixIcon: Icon(Icons.search_rounded),
+                      hintText: 'Buscar código, cliente ou destino...',
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width: 210,
-                child: DropdownButtonFormField<OrderStatus?>(
-                  initialValue: _status,
-                  decoration: const InputDecoration(isDense: true, labelText: 'Status'),
-                  items: [
-                    const DropdownMenuItem(value: null, child: Text('Todos os status')),
-                    for (final status in OrderStatus.values)
-                      DropdownMenuItem(value: status, child: Text(status.label)),
-                  ],
-                  onChanged: (value) => setState(() => _status = value),
+                SizedBox(
+                  width: constraints.maxWidth < 210
+                      ? constraints.maxWidth
+                      : 210,
+                  child: DropdownButtonFormField<OrderStatus?>(
+                    initialValue: _status,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      labelText: 'Status',
+                    ),
+                    items: [
+                      const DropdownMenuItem(
+                        value: null,
+                        child: Text('Todos os status'),
+                      ),
+                      for (final status in OrderStatus.values)
+                        DropdownMenuItem(
+                          value: status,
+                          child: Text(status.label),
+                        ),
+                    ],
+                    onChanged: (value) => setState(() => _status = value),
+                  ),
                 ),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => setState(() => _newestFirst = !_newestFirst),
-                icon: Icon(_newestFirst ? Icons.south_rounded : Icons.north_rounded),
-                label: Text(_newestFirst ? 'Mais recentes' : 'Mais antigos'),
-              ),
-            ],
+                OutlinedButton.icon(
+                  onPressed: () => setState(() => _newestFirst = !_newestFirst),
+                  icon: Icon(
+                    _newestFirst ? Icons.south_rounded : Icons.north_rounded,
+                  ),
+                  label: Text(_newestFirst ? 'Mais recentes' : 'Mais antigos'),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 14),
@@ -1174,7 +1220,9 @@ class FleetPage extends StatelessWidget {
               .toList()
         : store.drivers;
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+      ),
       children: [
         SectionHeader(
           title: store.settings.role == UserRole.motorista ? 'Minhas rotas' : 'Frota e motoristas',
@@ -1203,7 +1251,7 @@ class FleetPage extends StatelessWidget {
               crossAxisCount: constraints.maxWidth > 1180 ? 3 : constraints.maxWidth > 700 ? 2 : 1,
               crossAxisSpacing: 14,
               mainAxisSpacing: 14,
-              mainAxisExtent: 240,
+              mainAxisExtent: constraints.maxWidth < 600 ? 280 : 240,
             ),
             itemBuilder: (context, index) {
               final driver = drivers[index];
@@ -1231,7 +1279,7 @@ class _FleetMap extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: SizedBox(
-        height: 340,
+        height: MediaQuery.sizeOf(context).width < 600 ? 250 : 340,
         child: Stack(
           children: [
             FlutterMap(

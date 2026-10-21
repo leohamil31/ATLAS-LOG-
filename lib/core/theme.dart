@@ -36,14 +36,14 @@ class AtlasColors {
 
   static const darkPalette = AtlasColors(
     dark: true,
-    bg: Color(0xFF0F172A), // slate-900
-    surface: Color(0xFF111C33),
-    card: Color(0xFF1E293B), // slate-800
-    border: Color(0xFF334155), // slate-700
-    text: Color(0xFFF1F5F9),
-    muted: Color(0xFF94A3B8),
-    accent: Color(0xFF22D3EE), // ciano neon
-    accent2: Color(0xFF3B82F6),
+    bg: Color(0xFF061625),
+    surface: Color(0xFF082137),
+    card: Color(0xFF0C2940),
+    border: Color(0xFF17435B),
+    text: Color(0xFFEAF8FF),
+    muted: Color(0xFF9BB9CA),
+    accent: Color(0xFF22DDF2),
+    accent2: Color(0xFF1688D4),
     success: Color(0xFF34D399), // esmeralda
     warning: Color(0xFFFBBF24),
     danger: Color(0xFFF87171),
@@ -51,14 +51,14 @@ class AtlasColors {
 
   static const lightPalette = AtlasColors(
     dark: false,
-    bg: Color(0xFFF1F5F9),
+    bg: Color(0xFFEAF4F8),
     surface: Color(0xFFFFFFFF),
     card: Color(0xFFFFFFFF),
-    border: Color(0xFFE2E8F0),
-    text: Color(0xFF0F172A),
-    muted: Color(0xFF64748B),
-    accent: Color(0xFF0891B2),
-    accent2: Color(0xFF2563EB),
+    border: Color(0xFFD2E3EB),
+    text: Color(0xFF09243A),
+    muted: Color(0xFF587486),
+    accent: Color(0xFF008FA8),
+    accent2: Color(0xFF126FAE),
     success: Color(0xFF059669),
     warning: Color(0xFFD97706),
     danger: Color(0xFFDC2626),

@@ -75,20 +75,30 @@ class _GlassCardState extends State<GlassCard> {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    final dur = context.reduceMotion ? Duration.zero : const Duration(milliseconds: 200);
+    final dur = context.reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 200);
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
-      cursor: widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+      cursor: widget.onTap != null
+          ? SystemMouseCursors.click
+          : MouseCursor.defer,
       child: AnimatedContainer(
         duration: dur,
         curve: Curves.easeOut,
-        transform: Matrix4.translationValues(0, _hover && widget.onTap != null ? -2 : 0, 0),
+        transform: Matrix4.translationValues(
+          0,
+          _hover && widget.onTap != null ? -2 : 0,
+          0,
+        ),
         decoration: BoxDecoration(
           color: ac.card,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: _hover ? (widget.accent ?? ac.accent).withValues(alpha: 0.6) : ac.border,
+            color: _hover
+                ? (widget.accent ?? ac.accent).withValues(alpha: 0.6)
+                : ac.border,
           ),
           boxShadow: [
             BoxShadow(
@@ -124,7 +134,8 @@ class Skeleton extends StatefulWidget {
   State<Skeleton> createState() => _SkeletonState();
 }
 
-class _SkeletonState extends State<Skeleton> with SingleTickerProviderStateMixin {
+class _SkeletonState extends State<Skeleton>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1100),
@@ -216,7 +227,8 @@ class StatusChip extends StatefulWidget {
   State<StatusChip> createState() => _StatusChipState();
 }
 
-class _StatusChipState extends State<StatusChip> with SingleTickerProviderStateMixin {
+class _StatusChipState extends State<StatusChip>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1200),
@@ -225,7 +237,8 @@ class _StatusChipState extends State<StatusChip> with SingleTickerProviderStateM
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final pulse = widget.status == OrderStatus.emTransito && !context.reduceMotion;
+    final pulse =
+        widget.status == OrderStatus.emTransito && !context.reduceMotion;
     if (pulse && !_c.isAnimating) {
       _c.repeat(reverse: true);
     } else if (!pulse) {
@@ -278,7 +291,14 @@ class _StatusChipState extends State<StatusChip> with SingleTickerProviderStateM
             ),
           ),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -286,7 +306,12 @@ class _StatusChipState extends State<StatusChip> with SingleTickerProviderStateM
 }
 
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.title, required this.message, this.action});
+  const EmptyState({
+    super.key,
+    required this.title,
+    required this.message,
+    this.action,
+  });
 
   final String title;
   final String message;
@@ -309,9 +334,16 @@ class EmptyState extends StatelessWidget {
               loop: true,
             ),
             const SizedBox(height: 14),
-            Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+            ),
             const SizedBox(height: 4),
-            Text(message, textAlign: TextAlign.center, style: TextStyle(color: ac.muted)),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: ac.muted),
+            ),
             if (action != null) ...[const SizedBox(height: 16), action!],
           ],
         ),
@@ -329,7 +361,9 @@ class CountUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dur = context.reduceMotion ? Duration.zero : const Duration(milliseconds: 700);
+    final dur = context.reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 700);
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: value.toDouble()),
       duration: dur,
@@ -370,7 +404,13 @@ class KpiCard extends StatelessWidget {
       accent: color,
       child: Row(
         children: [
-          Icon3D(icon: icon, color: color, motion: motion, loop: loop, size: 52),
+          Icon3D(
+            icon: icon,
+            color: color,
+            motion: motion,
+            loop: loop,
+            size: 52,
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -378,16 +418,31 @@ class KpiCard extends StatelessWidget {
               children: [
                 CountUp(
                   value: value,
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, height: 1.1),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    height: 1.1,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   label,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: ac.muted, fontWeight: FontWeight.w600, fontSize: 13),
+                  style: TextStyle(
+                    color: ac.muted,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
                 if (hint != null)
-                  Text(hint!, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+                  Text(
+                    hint!,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -419,7 +474,10 @@ class DialogShell extends StatelessWidget {
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(16),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: MediaQuery.sizeOf(context).height * 0.9),
+        constraints: BoxConstraints(
+          maxWidth: maxWidth,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        ),
         child: Glass(
           opacity: ac.dark ? 0.92 : 0.96,
           radius: 24,
@@ -432,7 +490,13 @@ class DialogShell extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                     IconButton(
                       tooltip: 'Fechar',
@@ -488,7 +552,12 @@ void toast(BuildContext context, String message, {bool error = false}) {
 
 /// Título de seção com ação opcional à direita.
 class SectionHeader extends StatelessWidget {
-  const SectionHeader({super.key, required this.title, this.subtitle, this.trailing});
+  const SectionHeader({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+  });
 
   final String title;
   final String? subtitle;
@@ -497,21 +566,41 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final heading = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: constraints.maxWidth < 560 ? 21 : 24,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            if (subtitle != null)
+              Text(subtitle!, style: TextStyle(color: ac.muted)),
+          ],
+        );
+        if (trailing == null) return heading;
+        if (constraints.maxWidth < 560) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
-              if (subtitle != null)
-                Text(subtitle!, style: TextStyle(color: ac.muted)),
+              heading,
+              const SizedBox(height: 12),
+              Align(alignment: Alignment.centerLeft, child: trailing!),
             ],
-          ),
-        ),
-        ?trailing,
-      ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(child: heading),
+            trailing!,
+          ],
+        );
+      },
     );
   }
 }
