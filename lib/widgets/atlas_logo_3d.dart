@@ -179,70 +179,102 @@ class _AtlasMarkPainter extends CustomPainter {
     final offset = Offset((size.width - unit) / 2, (size.height - unit) / 2);
     final bounds = Rect.fromLTWH(offset.dx, offset.dy, unit, unit);
     final scale = unit / 100;
-    final aPath = Path()
-      ..moveTo(offset.dx + 15 * scale, offset.dy + 84 * scale)
-      ..lineTo(offset.dx + 43 * scale, offset.dy + 19 * scale)
+    Offset point(double x, double y) =>
+        Offset(offset.dx + x * scale, offset.dy + y * scale);
+    final leftLeg = Path()
+      ..moveTo(point(10, 86).dx, point(10, 86).dy)
+      ..lineTo(point(40, 18).dx, point(40, 18).dy)
       ..quadraticBezierTo(
-        offset.dx + 50 * scale,
-        offset.dy + 8 * scale,
-        offset.dx + 57 * scale,
-        offset.dy + 19 * scale,
+        point(50, 4).dx,
+        point(50, 4).dy,
+        point(60, 18).dx,
+        point(60, 18).dy,
       )
-      ..lineTo(offset.dx + 85 * scale, offset.dy + 84 * scale);
+      ..lineTo(point(68, 37).dx, point(68, 37).dy)
+      ..lineTo(point(55, 44).dx, point(55, 44).dy)
+      ..lineTo(point(49, 30).dx, point(49, 30).dy)
+      ..lineTo(point(25, 86).dx, point(25, 86).dy)
+      ..close();
+    final rightLeg = Path()
+      ..moveTo(point(55, 50).dx, point(55, 50).dy)
+      ..lineTo(point(68, 43).dx, point(68, 43).dy)
+      ..lineTo(point(87, 86).dx, point(87, 86).dy)
+      ..lineTo(point(70, 86).dx, point(70, 86).dy)
+      ..close();
     final crossbar = Path()
-      ..moveTo(offset.dx + 30 * scale, offset.dy + 60 * scale)
-      ..lineTo(offset.dx + 70 * scale, offset.dy + 60 * scale);
+      ..moveTo(point(31, 59).dx, point(31, 59).dy)
+      ..lineTo(point(67, 59).dx, point(67, 59).dy)
+      ..lineTo(point(74, 73).dx, point(74, 73).dy)
+      ..lineTo(point(25, 73).dx, point(25, 73).dy)
+      ..close();
     final arrow = Path()
-      ..moveTo(offset.dx + 13 * scale, offset.dy + 68 * scale)
-      ..lineTo(offset.dx + 42 * scale, offset.dy + 61 * scale)
-      ..lineTo(offset.dx + 70 * scale, offset.dy + 34 * scale);
+      ..moveTo(point(8, 78).dx, point(8, 78).dy)
+      ..cubicTo(
+        point(29, 75).dx,
+        point(29, 75).dy,
+        point(52, 66).dx,
+        point(52, 66).dy,
+        point(72, 46).dx,
+        point(72, 46).dy,
+      )
+      ..lineTo(point(88, 28).dx, point(88, 28).dy);
     final arrowHead = Path()
-      ..moveTo(offset.dx + 61 * scale, offset.dy + 32 * scale)
-      ..lineTo(offset.dx + 73 * scale, offset.dy + 30 * scale)
-      ..lineTo(offset.dx + 72 * scale, offset.dy + 43 * scale);
+      ..moveTo(point(72, 30).dx, point(72, 30).dy)
+      ..lineTo(point(92, 20).dx, point(92, 20).dy)
+      ..lineTo(point(88, 42).dx, point(88, 42).dy);
 
     final metal = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 11 * scale
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.fill
       ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white, Color(0xFFD5F7FF), Color(0xFF82D9F0)],
+        colors: [
+          Colors.white,
+          Color(0xFFF4FDFF),
+          Color(0xFFB7EAF5),
+          Color(0xFF78C9E0),
+        ],
       ).createShader(bounds);
     final darkExtrusion = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 15 * scale
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..color = blue.withValues(alpha: 0.65);
+      ..style = PaintingStyle.fill
+      ..color = blue.withValues(alpha: 0.72);
 
     canvas.save();
-    canvas.translate(0, 2 * scale);
-    canvas.drawPath(aPath, darkExtrusion);
+    canvas.translate(0, 3 * scale);
+    canvas.drawPath(leftLeg, darkExtrusion);
+    canvas.drawPath(rightLeg, darkExtrusion);
     canvas.drawPath(crossbar, darkExtrusion);
     canvas.restore();
-    canvas.drawPath(aPath, metal);
+    canvas.drawPath(leftLeg, metal);
+    canvas.drawPath(rightLeg, metal);
     canvas.drawPath(crossbar, metal);
 
     final arrowPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 7 * scale
+      ..strokeWidth = 8 * scale
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..color = cyan
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 5 * scale);
     canvas.drawPath(arrow, arrowPaint);
-    canvas.drawPath(arrowHead, arrowPaint..maskFilter = null);
+    canvas.drawPath(arrowHead, arrowPaint..strokeWidth = 7 * scale);
     final arrowFace = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4 * scale
+      ..strokeWidth = 4.5 * scale
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..color = highlight;
     canvas.drawPath(arrow, arrowFace);
     canvas.drawPath(arrowHead, arrowFace);
+
+    final bevel = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = Colors.white.withValues(alpha: 0.72);
+    canvas.drawPath(leftLeg, bevel);
+    canvas.drawPath(rightLeg, bevel);
   }
 
   @override
