@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 
 class AtlasLogo3D extends StatefulWidget {
-  const AtlasLogo3D({
-    super.key,
-    this.size = 44,
-    this.showWordmark = false,
-  });
+  const AtlasLogo3D({super.key, this.size = 44, this.showWordmark = false});
 
   final double size;
   final bool showWordmark;
@@ -76,7 +72,7 @@ class _AtlasLogo3DState extends State<AtlasLogo3D>
       onEnter: (_) => _setHovered(true),
       onExit: (_) => _setHovered(false),
       child: Semantics(
-        label: 'Logo ATLAS-LOG, globo e rosa dos ventos',
+        label: 'Logo ATLAS-LOG, letra A com seta de crescimento',
         image: true,
         child: AnimatedBuilder(
           animation: Listenable.merge([_float, _turn]),
@@ -101,7 +97,6 @@ class _AtlasLogo3DState extends State<AtlasLogo3D>
                 width: widget.size,
                 height: widget.size,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
                       color: colors.accent.withValues(alpha: glow),
@@ -111,7 +106,7 @@ class _AtlasLogo3DState extends State<AtlasLogo3D>
                   ],
                 ),
                 child: CustomPaint(
-                  painter: _AtlasGlobePainter(
+                  painter: _AtlasMarkPainter(
                     cyan: colors.accent,
                     blue: colors.accent2,
                     highlight: const Color(0xFFE0FBFF),
@@ -167,8 +162,8 @@ class _AtlasLogo3DState extends State<AtlasLogo3D>
   }
 }
 
-class _AtlasGlobePainter extends CustomPainter {
-  const _AtlasGlobePainter({
+class _AtlasMarkPainter extends CustomPainter {
+  const _AtlasMarkPainter({
     required this.cyan,
     required this.blue,
     required this.highlight,
@@ -180,119 +175,78 @@ class _AtlasGlobePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.shortestSide * 0.39;
-    final globeRect = Rect.fromCircle(center: center, radius: radius);
+    final unit = size.shortestSide;
+    final offset = Offset((size.width - unit) / 2, (size.height - unit) / 2);
+    final bounds = Rect.fromLTWH(offset.dx, offset.dy, unit, unit);
+    final scale = unit / 100;
+    final aPath = Path()
+      ..moveTo(offset.dx + 15 * scale, offset.dy + 84 * scale)
+      ..lineTo(offset.dx + 43 * scale, offset.dy + 19 * scale)
+      ..quadraticBezierTo(
+        offset.dx + 50 * scale,
+        offset.dy + 8 * scale,
+        offset.dx + 57 * scale,
+        offset.dy + 19 * scale,
+      )
+      ..lineTo(offset.dx + 85 * scale, offset.dy + 84 * scale);
+    final crossbar = Path()
+      ..moveTo(offset.dx + 30 * scale, offset.dy + 60 * scale)
+      ..lineTo(offset.dx + 70 * scale, offset.dy + 60 * scale);
+    final arrow = Path()
+      ..moveTo(offset.dx + 13 * scale, offset.dy + 68 * scale)
+      ..lineTo(offset.dx + 42 * scale, offset.dy + 61 * scale)
+      ..lineTo(offset.dx + 70 * scale, offset.dy + 34 * scale);
+    final arrowHead = Path()
+      ..moveTo(offset.dx + 61 * scale, offset.dy + 32 * scale)
+      ..lineTo(offset.dx + 73 * scale, offset.dy + 30 * scale)
+      ..lineTo(offset.dx + 72 * scale, offset.dy + 43 * scale);
 
-    canvas.drawCircle(
-      center.translate(0, radius * 0.16),
-      radius * 1.2,
-      Paint()
-        ..color = cyan.withValues(alpha: 0.14)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9),
-    );
-    canvas.drawCircle(
-      center,
-      radius * 1.2,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = size.shortestSide * 0.035
-        ..shader = SweepGradient(
-          colors: [cyan.withValues(alpha: 0.08), cyan, blue, cyan],
-        ).createShader(globeRect),
-    );
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..shader = RadialGradient(
-          center: const Alignment(-0.5, -0.65),
-          radius: 1.15,
-          colors: [
-            const Color(0xFF62F0FF),
-            cyan,
-            blue,
-            const Color(0xFF102B59),
-          ],
-          stops: const [0, 0.24, 0.68, 1],
-        ).createShader(globeRect),
-    );
-
-    final clip = Path()..addOval(globeRect);
-    canvas.save();
-    canvas.clipPath(clip);
-
-    final gridPaint = Paint()
-      ..color = highlight.withValues(alpha: 0.52)
+    final metal = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.shortestSide * 0.018;
-    for (final factor in [0.38, 0.7]) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: center,
-          width: radius * 2 * factor,
-          height: radius * 2,
-        ),
-        gridPaint,
-      );
-    }
-    for (final factor in [-0.48, 0.48]) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: center.translate(0, radius * factor),
-          width: radius * 1.65,
-          height: radius * 0.48,
-        ),
-        gridPaint,
-      );
-    }
-    canvas.restore();
-
-    final orbitPaint = Paint()
-      ..color = highlight.withValues(alpha: 0.92)
+      ..strokeWidth = 11 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..shader = const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.white, Color(0xFFD5F7FF), Color(0xFF82D9F0)],
+      ).createShader(bounds);
+    final darkExtrusion = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.shortestSide * 0.035
-      ..strokeCap = StrokeCap.round;
-    canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.rotate(-math.pi / 5);
-    canvas.drawArc(
-      Rect.fromCenter(
-        center: Offset.zero,
-        width: radius * 2.75,
-        height: radius * 0.86,
-      ),
-      math.pi * 0.04,
-      math.pi * 0.92,
-      false,
-      orbitPaint,
-    );
-    canvas.restore();
+      ..strokeWidth = 15 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = blue.withValues(alpha: 0.65);
 
-    final compass = Path()
-      ..moveTo(center.dx, center.dy - radius * 0.78)
-      ..lineTo(center.dx + radius * 0.16, center.dy - radius * 0.08)
-      ..lineTo(center.dx, center.dy + radius * 0.04)
-      ..lineTo(center.dx - radius * 0.16, center.dy - radius * 0.08)
-      ..close();
-    canvas.drawPath(
-      compass,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [highlight, Colors.white, cyan],
-        ).createShader(globeRect),
-    );
-    canvas.drawCircle(
-      center,
-      radius * 0.1,
-      Paint()..color = highlight,
-    );
+    canvas.save();
+    canvas.translate(0, 2 * scale);
+    canvas.drawPath(aPath, darkExtrusion);
+    canvas.drawPath(crossbar, darkExtrusion);
+    canvas.restore();
+    canvas.drawPath(aPath, metal);
+    canvas.drawPath(crossbar, metal);
+
+    final arrowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = cyan
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 5 * scale);
+    canvas.drawPath(arrow, arrowPaint);
+    canvas.drawPath(arrowHead, arrowPaint..maskFilter = null);
+    final arrowFace = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = highlight;
+    canvas.drawPath(arrow, arrowFace);
+    canvas.drawPath(arrowHead, arrowFace);
   }
 
   @override
-  bool shouldRepaint(covariant _AtlasGlobePainter oldDelegate) =>
+  bool shouldRepaint(covariant _AtlasMarkPainter oldDelegate) =>
       oldDelegate.cyan != cyan ||
       oldDelegate.blue != blue ||
       oldDelegate.highlight != highlight;
