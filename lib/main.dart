@@ -76,7 +76,7 @@ class _AtlasLogAppState extends State<AtlasLogApp> {
       return MaterialApp(
         title: 'ATLAS-LOG',
         debugShowCheckedModeBanner: false,
-        theme: buildTheme(dark: true),
+        theme: buildTheme(dark: false),
         home: const Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }

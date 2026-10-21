@@ -340,8 +340,10 @@ extension UserRoleLabel on UserRole {
 
 /// Preferências do sistema e regras padrão de entrega.
 class Settings {
+  static const _currentAppearanceVersion = 1;
+
   Settings({
-    this.darkMode = true,
+    this.darkMode = false,
     this.sound = true,
     this.defaultDeliveryDays = 3,
     this.autoAssignDriver = false,
@@ -365,6 +367,7 @@ class Settings {
   String userName;
 
   Map<String, dynamic> toJson() => {
+    'appearanceVersion': _currentAppearanceVersion,
     'darkMode': darkMode,
     'sound': sound,
     'defaultDeliveryDays': defaultDeliveryDays,
@@ -374,13 +377,19 @@ class Settings {
     'roleDriverId': roleDriverId,
   };
 
-  factory Settings.fromJson(Map<String, dynamic> json) => Settings(
-    darkMode: (json['darkMode'] as bool?) ?? true,
-    sound: (json['sound'] as bool?) ?? true,
-    defaultDeliveryDays: (json['defaultDeliveryDays'] as num?)?.toInt() ?? 3,
-    autoAssignDriver: (json['autoAssignDriver'] as bool?) ?? false,
-    userName: (json['userName'] as String?) ?? 'Operador Atlas',
-    role: UserRole.values.byName((json['role'] as String?) ?? 'admin'),
-    roleDriverId: (json['roleDriverId'] as String?) ?? 'D-001',
-  );
+  factory Settings.fromJson(Map<String, dynamic> json) {
+    final appearanceVersion =
+        (json['appearanceVersion'] as num?)?.toInt() ?? 0;
+    return Settings(
+      darkMode: appearanceVersion >= _currentAppearanceVersion
+          ? (json['darkMode'] as bool?) ?? false
+          : false,
+      sound: (json['sound'] as bool?) ?? true,
+      defaultDeliveryDays: (json['defaultDeliveryDays'] as num?)?.toInt() ?? 3,
+      autoAssignDriver: (json['autoAssignDriver'] as bool?) ?? false,
+      userName: (json['userName'] as String?) ?? 'Operador Atlas',
+      role: UserRole.values.byName((json['role'] as String?) ?? 'admin'),
+      roleDriverId: (json['roleDriverId'] as String?) ?? 'D-001',
+    );
+  }
 }

@@ -10,16 +10,22 @@ operação logística. O app Flutter funciona na web, Android e iOS.
 ## Funcionalidades
 
 - Dashboard com KPIs, fluxo diário, distribuição por status, atividade e alertas.
-- Cadastro, edição, busca, filtro, rastreamento e cancelamento de pedidos.
+- Cadastro, edição, rastreamento e cancelamento de pedidos, com busca por
+  motorista/placa, filtros por status/período e paginação.
 - Timeline de rastreio, etiqueta com QR Code/código de barras, simulador de
   frete e atalho para WhatsApp.
 - Cadastro de motoristas, vínculo de cargas, mapa de posições estimadas e
   sugestão de sequência de paradas.
 - Relatórios CSV/PDF, indicadores financeiros demonstrativos e backup JSON.
-- Preferências, tema escuro, notificações e troca demonstrativa de perfil.
+- Preferências, tema claro inicial (com opção de tema escuro), notificações e
+  troca demonstrativa de perfil.
 - Página pública de rastreio em `/rastreio?codigo=ATL-2400`.
 - PWA instalável com cache de recursos do Flutter e dados operacionais salvos
   localmente no dispositivo.
+
+O PWA usa `./` como URL inicial e escopo relativo ao manifesto, para funcionar
+na raiz local e na subpasta `/ATLAS-LOG-/` do GitHub Pages. O fluxo de publicação
+calcula o `base-href` conforme o repositório.
 
 ## Executar
 

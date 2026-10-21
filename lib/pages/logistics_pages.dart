@@ -27,7 +27,11 @@ const _navItems = <(String, IconData)>[
 ];
 
 class LogisticsShell extends StatefulWidget {
-  const LogisticsShell({required this.store, required this.userName, super.key});
+  const LogisticsShell({
+    required this.store,
+    required this.userName,
+    super.key,
+  });
 
   final AtlasStore store;
   final String userName;
@@ -63,14 +67,16 @@ class _LogisticsShellState extends State<LogisticsShell> {
   void _openPalette() {
     showDialog<void>(
       context: context,
-      builder: (context) => _CommandPalette(store: store, onNavigate: _navigate),
+      builder: (context) =>
+          _CommandPalette(store: store, onNavigate: _navigate),
     );
   }
 
   void _openAssistant() {
     showDialog<void>(
       context: context,
-      builder: (context) => AssistantDialog(store: store, onNavigate: _navigate),
+      builder: (context) =>
+          AssistantDialog(store: store, onNavigate: _navigate),
     );
   }
 
@@ -78,8 +84,10 @@ class _LogisticsShellState extends State<LogisticsShell> {
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyK, control: true): _openPalette,
-        const SingleActivator(LogicalKeyboardKey.keyK, meta: true): _openPalette,
+        const SingleActivator(LogicalKeyboardKey.keyK, control: true):
+            _openPalette,
+        const SingleActivator(LogicalKeyboardKey.keyK, meta: true):
+            _openPalette,
       },
       child: Focus(
         autofocus: true,
@@ -101,10 +109,7 @@ class _LogisticsShellState extends State<LogisticsShell> {
                     child: child,
                   ),
                 ),
-                child: KeyedSubtree(
-                  key: ValueKey(_page),
-                  child: _buildPage(),
-                ),
+                child: KeyedSubtree(key: ValueKey(_page), child: _buildPage()),
               );
               if (!wide) {
                 final mobilePages = _mobilePages.where(_canSee).toList();
@@ -149,7 +154,8 @@ class _LogisticsShellState extends State<LogisticsShell> {
                     selectedIndex: _bottomIndex(mobilePages),
                     labelBehavior:
                         NavigationDestinationLabelBehavior.onlyShowSelected,
-                    onDestinationSelected: (index) => _navigate(mobilePages[index]),
+                    onDestinationSelected: (index) =>
+                        _navigate(mobilePages[index]),
                     destinations: [
                       for (final page in mobilePages)
                         NavigationDestination(
@@ -168,8 +174,7 @@ class _LogisticsShellState extends State<LogisticsShell> {
                       selected: _page,
                       collapsed: _collapsed,
                       onSelect: _navigate,
-                      onToggle: () =>
-                          setState(() => _collapsed = !_collapsed),
+                      onToggle: () => setState(() => _collapsed = !_collapsed),
                     ),
                     Expanded(
                       child: Column(
@@ -202,9 +207,8 @@ class _LogisticsShellState extends State<LogisticsShell> {
     return index < 0 ? 0 : index;
   }
 
-  IconData _iconFor(String page) => _navItems
-      .firstWhere((item) => item.$1 == page)
-      .$2;
+  IconData _iconFor(String page) =>
+      _navItems.firstWhere((item) => item.$1 == page).$2;
 
   Widget _notificationAction() => IconButton(
     tooltip: 'Notificações (${store.unreadCount} não lidas)',
@@ -278,7 +282,10 @@ class _Sidebar extends StatelessWidget {
               padding: EdgeInsets.all(collapsed ? 16 : 22),
               child: Row(
                 children: [
-                  AtlasLogo3D(size: collapsed ? 42 : 44, showWordmark: !collapsed),
+                  AtlasLogo3D(
+                    size: collapsed ? 42 : 44,
+                    showWordmark: !collapsed,
+                  ),
                 ],
               ),
             ),
@@ -290,7 +297,11 @@ class _Sidebar extends StatelessWidget {
                     Expanded(
                       child: Text(
                         store.settings.role.label.toUpperCase(),
-                        style: TextStyle(color: colors.muted, fontSize: 10, letterSpacing: 1),
+                        style: TextStyle(
+                          color: colors.muted,
+                          fontSize: 10,
+                          letterSpacing: 1,
+                        ),
                       ),
                     ),
                     if (onToggle != null)
@@ -314,11 +325,17 @@ class _Sidebar extends StatelessWidget {
                         message: collapsed ? item.$1 : '',
                         child: ListTile(
                           selected: selected == item.$1,
-                          selectedTileColor: colors.accent.withValues(alpha: .14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+                          selectedTileColor: colors.accent.withValues(
+                            alpha: .14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(13),
+                          ),
                           leading: Icon3D(
                             icon: item.$2,
-                            color: selected == item.$1 ? colors.accent2 : colors.muted,
+                            color: selected == item.$1
+                                ? colors.accent2
+                                : colors.muted,
                             size: 36,
                             animate: selected == item.$1,
                             motion: item.$1 == 'Configurações'
@@ -330,7 +347,9 @@ class _Sidebar extends StatelessWidget {
                               : Text(
                                   item.$1,
                                   style: TextStyle(
-                                    fontWeight: selected == item.$1 ? FontWeight.w800 : FontWeight.w500,
+                                    fontWeight: selected == item.$1
+                                        ? FontWeight.w800
+                                        : FontWeight.w500,
                                   ),
                                 ),
                           trailing: !collapsed && item.$1 == 'Pedidos'
@@ -354,10 +373,26 @@ class _Sidebar extends StatelessWidget {
               leading: CircleAvatar(
                 backgroundColor: colors.accent2,
                 foregroundColor: Colors.white,
-                child: Text(store.settings.userName.isEmpty ? 'A' : store.settings.userName[0].toUpperCase()),
+                child: Text(
+                  store.settings.userName.isEmpty
+                      ? 'A'
+                      : store.settings.userName[0].toUpperCase(),
+                ),
               ),
-              title: collapsed ? null : Text(store.settings.userName, maxLines: 1, overflow: TextOverflow.ellipsis),
-              subtitle: collapsed ? null : Text(store.settings.role.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              title: collapsed
+                  ? null
+                  : Text(
+                      store.settings.userName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+              subtitle: collapsed
+                  ? null
+                  : Text(
+                      store.settings.role.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
               onTap: () => onSelect('Configurações'),
             ),
           ],
@@ -382,7 +417,14 @@ class _NavCount extends StatelessWidget {
         color: colors.accent.withValues(alpha: .14),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Text('$count', style: TextStyle(color: colors.accent, fontWeight: FontWeight.w800, fontSize: 11)),
+      child: Text(
+        '$count',
+        style: TextStyle(
+          color: colors.accent,
+          fontWeight: FontWeight.w800,
+          fontSize: 11,
+        ),
+      ),
     );
   }
 }
@@ -408,40 +450,80 @@ class _TopBar extends StatelessWidget {
     return Glass(
       radius: 0,
       blur: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
-      child: Row(
-        children: [
-          const AtlasLogo3D(size: 40),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title == 'Dashboard' ? 'Visão geral da operação' : title,
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-            ),
-          ),
-          OutlinedButton.icon(
-            onPressed: onSearch,
-            icon: const Icon(Icons.search_rounded, size: 17),
-            label: const Text('Buscar pedidos e telas'),
-          ),
-          const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: onAssistant,
-            icon: const Icon(Icons.auto_awesome_rounded, size: 17),
-            label: const Text('Assistente'),
-          ),
-          const SizedBox(width: 5),
-          notification,
-          const SizedBox(width: 8),
-          CircleAvatar(
-            radius: 17,
-            backgroundColor: colors.accent2,
-            foregroundColor: Colors.white,
-            child: Text(userName.isEmpty ? 'A' : userName[0].toUpperCase()),
-          ),
-          const SizedBox(width: 9),
-          Text(userName, style: const TextStyle(fontWeight: FontWeight.w700)),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 900;
+          return Row(
+            children: [
+              AtlasLogo3D(size: compact ? 36 : 40),
+              SizedBox(width: compact ? 10 : 14),
+              Expanded(
+                child: Text(
+                  title == 'Dashboard' ? 'Visão geral da operação' : title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              if (compact) ...[
+                IconButton(
+                  tooltip: 'Buscar pedidos e telas',
+                  onPressed: onSearch,
+                  icon: const Icon(Icons.search_rounded),
+                ),
+                IconButton(
+                  tooltip: 'Assistente de logística',
+                  onPressed: onAssistant,
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                ),
+                notification,
+                Tooltip(
+                  message: userName,
+                  child: CircleAvatar(
+                    radius: 17,
+                    backgroundColor: colors.accent2,
+                    foregroundColor: Colors.white,
+                    child: Text(
+                      userName.isEmpty ? 'A' : userName[0].toUpperCase(),
+                    ),
+                  ),
+                ),
+              ] else ...[
+                OutlinedButton.icon(
+                  onPressed: onSearch,
+                  icon: const Icon(Icons.search_rounded, size: 17),
+                  label: const Text('Buscar pedidos e telas'),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: onAssistant,
+                  icon: const Icon(Icons.auto_awesome_rounded, size: 17),
+                  label: const Text('Assistente'),
+                ),
+                const SizedBox(width: 5),
+                notification,
+                const SizedBox(width: 8),
+                CircleAvatar(
+                  radius: 17,
+                  backgroundColor: colors.accent2,
+                  foregroundColor: Colors.white,
+                  child: Text(
+                    userName.isEmpty ? 'A' : userName[0].toUpperCase(),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Text(
+                  userName,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -470,9 +552,13 @@ class _CommandPaletteState extends State<_CommandPalette> {
   Widget build(BuildContext context) {
     final q = _query.text.trim().toLowerCase();
     final orders = widget.store.orders
-        .where((o) => q.isEmpty || '${o.id} ${o.cliente}'.toLowerCase().contains(q))
+        .where(
+          (o) => q.isEmpty || '${o.id} ${o.cliente}'.toLowerCase().contains(q),
+        )
         .take(5);
-    final pages = _navItems.where((e) => q.isEmpty || e.$1.toLowerCase().contains(q));
+    final pages = _navItems.where(
+      (e) => q.isEmpty || e.$1.toLowerCase().contains(q),
+    );
     return Dialog(
       backgroundColor: Colors.transparent,
       child: ConstrainedBox(
@@ -519,7 +605,9 @@ class _CommandPaletteState extends State<_CommandPalette> {
                       ListTile(
                         leading: const Icon(Icons.inventory_2_rounded),
                         title: Text('${order.id} · ${order.cliente}'),
-                        subtitle: Text('${order.status.label} · ${order.destino}'),
+                        subtitle: Text(
+                          '${order.status.label} · ${order.destino}',
+                        ),
                         onTap: () {
                           Navigator.pop(context);
                           showOrderDetails(context, widget.store, order.id);
@@ -530,7 +618,10 @@ class _CommandPaletteState extends State<_CommandPalette> {
               ),
               Padding(
                 padding: const EdgeInsets.all(12),
-                child: Text('Atalho: Ctrl+K ou Cmd+K', style: TextStyle(color: context.ac.muted, fontSize: 11)),
+                child: Text(
+                  'Atalho: Ctrl+K ou Cmd+K',
+                  style: TextStyle(color: context.ac.muted, fontSize: 11),
+                ),
               ),
             ],
           ),
@@ -558,12 +649,13 @@ class DashboardPage extends StatelessWidget {
     final role = store.settings.role;
     final alerts = [...store.lateOrders, ...store.divergentOrders]
       ..sort((a, b) => a.previsaoEntrega.compareTo(b.previsaoEntrega));
-    final flow = store.flow(store.now.subtract(const Duration(days: 6)), store.now);
+    final flow = store.flow(
+      store.now.subtract(const Duration(days: 6)),
+      store.now,
+    );
     final wide = MediaQuery.sizeOf(context).width >= 1100;
     return ListView(
-      padding: EdgeInsets.all(
-        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
-      ),
+      padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 16 : 24),
       children: [
         Glass(
           radius: 22,
@@ -618,18 +710,18 @@ class DashboardPage extends StatelessWidget {
                 );
               }
               return Row(
-              children: [
-                Expanded(child: greeting),
-                const SizedBox(width: 20),
-                if (role != UserRole.motorista)
-                  Button3D(
-                    label: 'Criar Pedido',
-                    icon: Icons.add_rounded,
-                    onPressed: () => showOrderForm(context, store),
-                  ),
+                children: [
+                  Expanded(child: greeting),
+                  const SizedBox(width: 20),
+                  if (role != UserRole.motorista)
+                    Button3D(
+                      label: 'Criar Pedido',
+                      icon: Icons.add_rounded,
+                      onPressed: () => showOrderForm(context, store),
+                    ),
                 ],
-            );
-          },
+              );
+            },
           ),
         ),
         const SizedBox(height: 20),
@@ -643,38 +735,44 @@ class DashboardPage extends StatelessWidget {
                   : 1;
               final cards = [
                 KpiCard(
-                  label: 'Total de envios',
-                  value: store.totalOrders,
-                  icon: Icons.inventory_2_rounded,
+                  label: 'Veículos ativos',
+                  value: store.drivers
+                      .where((driver) => driver.status == DriverStatus.emRota)
+                      .length,
+                  icon: Icons.local_shipping_rounded,
                   color: colors.accent2,
+                  motion: IconMotion.drive,
+                  loop: true,
+                  onTap: () => onNavigate('Frota'),
+                ),
+                KpiCard(
+                  label: 'Entregas em andamento',
+                  value: store.inTransitCount,
+                  icon: Icons.inventory_2_rounded,
+                  color: colors.accent,
                   motion: IconMotion.pop,
                   onTap: () => onNavigate('Pedidos'),
                 ),
                 KpiCard(
-                  label: 'Em trânsito',
-                  value: store.inTransitCount,
-                  icon: Icons.local_shipping_rounded,
-                  color: colors.accent,
-                  motion: IconMotion.drive,
-                  loop: true,
-                  onTap: () => onNavigate('Pedidos'),
-                ),
-                KpiCard(
-                  label: 'Entregues no prazo',
-                  value: store.deliveredOnTimeCount,
-                  icon: Icons.task_alt_rounded,
-                  color: colors.success,
-                  motion: IconMotion.bounce,
-                  onTap: () => onNavigate('Relatórios'),
-                ),
-                KpiCard(
-                  label: 'Alertas e atrasos',
-                  value: store.alertCount,
-                  icon: Icons.warning_amber_rounded,
-                  color: colors.danger,
+                  label: 'Atrasos',
+                  value: store.delayedCount,
+                  icon: Icons.schedule_rounded,
+                  color: colors.warning,
                   motion: IconMotion.pulse,
-                  loop: store.alertCount > 0,
+                  loop: store.delayedCount > 0,
                   onTap: () => onNavigate('Notificações'),
+                ),
+                KpiCard(
+                  label: 'Em manutenção',
+                  value: store.drivers
+                      .where(
+                        (driver) => driver.status == DriverStatus.manutencao,
+                      )
+                      .length,
+                  icon: Icons.build_circle_outlined,
+                  color: colors.danger,
+                  motion: IconMotion.bounce,
+                  onTap: () => onNavigate('Frota'),
                 ),
               ];
               return GridView.count(
@@ -683,7 +781,11 @@ class DashboardPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
-                childAspectRatio: count == 1 ? 3.2 : wide ? 2.05 : 1.75,
+                childAspectRatio: count == 1
+                    ? 3.2
+                    : wide
+                    ? 2.05
+                    : 1.75,
                 children: cards,
               );
             },
@@ -783,29 +885,57 @@ class _FlowChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(title: 'Fluxo de entregas', subtitle: 'Envios e entregas · últimos 7 dias'),
+          const SectionHeader(
+            title: 'Fluxo de entregas',
+            subtitle: 'Envios e entregas · últimos 7 dias',
+          ),
           const SizedBox(height: 22),
           SizedBox(
             height: 210,
             child: BarChart(
               BarChartData(
-                gridData: FlGridData(show: true, drawVerticalLine: false, getDrawingHorizontalLine: (_) => FlLine(color: colors.border, strokeWidth: .6)),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (_) =>
+                      FlLine(color: colors.border, strokeWidth: .6),
+                ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30, getTitlesWidget: (value, _) => Text('${value.toInt()}', style: TextStyle(color: colors.muted, fontSize: 10)))),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, _) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= flow.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(fmtShort(flow[index].day), style: TextStyle(color: colors.muted, fontSize: 10)),
-                      );
-                    },
-                  )),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      getTitlesWidget: (value, _) => Text(
+                        '${value.toInt()}',
+                        style: TextStyle(color: colors.muted, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, _) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= flow.length) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            fmtShort(flow[index].day),
+                            style: TextStyle(color: colors.muted, fontSize: 10),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
                 barGroups: [
                   for (var i = 0; i < flow.length; i++)
@@ -813,8 +943,18 @@ class _FlowChart extends StatelessWidget {
                       x: i,
                       barsSpace: 3,
                       barRods: [
-                        BarChartRodData(toY: flow[i].created.toDouble(), color: colors.accent2, width: 8, borderRadius: BorderRadius.circular(3)),
-                        BarChartRodData(toY: flow[i].delivered.toDouble(), color: colors.success, width: 8, borderRadius: BorderRadius.circular(3)),
+                        BarChartRodData(
+                          toY: flow[i].created.toDouble(),
+                          color: colors.accent2,
+                          width: 8,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        BarChartRodData(
+                          toY: flow[i].delivered.toDouble(),
+                          color: colors.success,
+                          width: 8,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ],
                     ),
                 ],
@@ -822,7 +962,12 @@ class _FlowChart extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const _Legend(items: [('Envios', Color(0xFF2563EB)), ('Entregas', Color(0xFF059669))]),
+          const _Legend(
+            items: [
+              ('Envios', Color(0xFF2563EB)),
+              ('Entregas', Color(0xFF059669)),
+            ],
+          ),
         ],
       ),
     );
@@ -839,12 +984,20 @@ class _StatusChart extends StatelessWidget {
     final colors = context.ac;
     final distribution = store.statusDistribution();
     final statuses = OrderStatus.values;
-    final palette = [colors.warning, colors.accent, colors.success, colors.danger];
+    final palette = [
+      colors.warning,
+      colors.accent,
+      colors.success,
+      colors.danger,
+    ];
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(title: 'Pedidos por status', subtitle: 'Distribuição da operação'),
+          const SectionHeader(
+            title: 'Pedidos por status',
+            subtitle: 'Distribuição da operação',
+          ),
           const SizedBox(height: 12),
           SizedBox(
             height: 186,
@@ -871,8 +1024,16 @@ class _StatusChart extends StatelessWidget {
                 children: [
                   CircleAvatar(radius: 5, backgroundColor: palette[i]),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(statuses[i].label, style: TextStyle(color: colors.muted, fontSize: 12))),
-                  Text('${distribution[statuses[i]]}', style: const TextStyle(fontWeight: FontWeight.w800)),
+                  Expanded(
+                    child: Text(
+                      statuses[i].label,
+                      style: TextStyle(color: colors.muted, fontSize: 12),
+                    ),
+                  ),
+                  Text(
+                    '${distribution[statuses[i]]}',
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ],
               ),
             ),
@@ -895,9 +1056,19 @@ class _Legend extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 9, height: 9, decoration: BoxDecoration(color: item.$2, borderRadius: BorderRadius.circular(3))),
+            Container(
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                color: item.$2,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
             const SizedBox(width: 6),
-            Text(item.$1, style: TextStyle(color: context.ac.muted, fontSize: 11)),
+            Text(
+              item.$1,
+              style: TextStyle(color: context.ac.muted, fontSize: 11),
+            ),
           ],
         ),
     ],
@@ -919,19 +1090,43 @@ class _AlertPanel extends StatelessWidget {
         children: [
           SectionHeader(
             title: 'Central de alertas',
-            subtitle: alerts.isEmpty ? 'Nenhum risco operacional no momento' : '${alerts.length} pedido(s) precisam de atenção',
-            trailing: alerts.isNotEmpty ? Icon3D(icon: Icons.notification_important_rounded, color: colors.danger, motion: IconMotion.pulse, loop: true, size: 38) : null,
+            subtitle: alerts.isEmpty
+                ? 'Nenhum risco operacional no momento'
+                : '${alerts.length} pedido(s) precisam de atenção',
+            trailing: alerts.isNotEmpty
+                ? Icon3D(
+                    icon: Icons.notification_important_rounded,
+                    color: colors.danger,
+                    motion: IconMotion.pulse,
+                    loop: true,
+                    size: 38,
+                  )
+                : null,
           ),
           const SizedBox(height: 12),
           if (alerts.isEmpty)
-            const EmptyState(title: 'Operação em dia', message: 'Atrasos e divergências aparecerão aqui.')
+            const EmptyState(
+              title: 'Operação em dia',
+              message: 'Atrasos e divergências aparecerão aqui.',
+            )
           else
             for (final order in alerts.take(5))
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.warning_amber_rounded, color: colors.danger),
-                title: Text('${order.id} · ${order.cliente}', maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(order.isLate(store.now) ? 'Entrega atrasada · ${order.destino}' : 'Pedido sem motorista disponível'),
+                leading: Icon(
+                  Icons.warning_amber_rounded,
+                  color: colors.danger,
+                ),
+                title: Text(
+                  '${order.id} · ${order.cliente}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(
+                  order.isLate(store.now)
+                      ? 'Entrega atrasada · ${order.destino}'
+                      : 'Pedido sem motorista disponível',
+                ),
                 trailing: IconButton(
                   tooltip: 'Ver pedido',
                   onPressed: () => showOrderDetails(context, store, order.id),
@@ -956,7 +1151,10 @@ class _ActivityPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(title: 'Atividade recente', subtitle: 'Últimas atualizações da operação'),
+          const SectionHeader(
+            title: 'Atividade recente',
+            subtitle: 'Últimas atualizações da operação',
+          ),
           const SizedBox(height: 12),
           for (final activity in store.recentActivity(limit: 7))
             Padding(
@@ -970,8 +1168,17 @@ class _ActivityPanel extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${activity.order.id} · ${activity.entry.label}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
-                        Text('${activity.order.cliente} · ${fmtAgo(activity.entry.date, store.now)}', style: TextStyle(color: colors.muted, fontSize: 11)),
+                        Text(
+                          '${activity.order.id} · ${activity.entry.label}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          '${activity.order.cliente} · ${fmtAgo(activity.entry.date, store.now)}',
+                          style: TextStyle(color: colors.muted, fontSize: 11),
+                        ),
                       ],
                     ),
                   ),
@@ -994,8 +1201,13 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  static const _pageSize = 20;
+
   final _search = TextEditingController();
   OrderStatus? _status;
+  String? _driverId;
+  DateTimeRange? _dateRange;
+  int _page = 0;
   bool _newestFirst = true;
 
   @override
@@ -1004,26 +1216,71 @@ class _OrdersPageState extends State<OrdersPage> {
     super.dispose();
   }
 
+  Future<void> _selectDateRange() async {
+    final now = widget.store.now;
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: now.add(const Duration(days: 365)),
+      initialDateRange:
+          _dateRange ??
+          DateTimeRange(start: now.subtract(const Duration(days: 6)), end: now),
+    );
+    if (range == null) return;
+    setState(() {
+      _dateRange = range;
+      _page = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.ac;
     final query = _search.text.trim().toLowerCase();
-    final orders = widget.store.orders.where((o) {
-      final matchesQuery = query.isEmpty ||
-          '${o.id} ${o.cliente} ${o.origem} ${o.destino}'.toLowerCase().contains(query);
-      return matchesQuery && (_status == null || o.status == _status);
-    }).toList()
-      ..sort((a, b) => _newestFirst
-          ? b.dataEnvio.compareTo(a.dataEnvio)
-          : a.dataEnvio.compareTo(b.dataEnvio));
+    final orders =
+        widget.store.orders.where((o) {
+          final driver = widget.store.driverById(o.motoristaId);
+          final searchable =
+              '${o.id} ${o.cliente} ${o.origem} ${o.destino} '
+                      '${driver?.nome ?? ''} ${driver?.placa ?? ''} ${driver?.veiculo ?? ''}'
+                  .toLowerCase();
+          final matchesQuery = query.isEmpty || searchable.contains(query);
+          final matchesStatus = _status == null || o.status == _status;
+          final matchesDriver = _driverId == null || o.motoristaId == _driverId;
+          final matchesDate =
+              _dateRange == null ||
+              (!o.dataEnvio.isBefore(
+                    DateTime(
+                      _dateRange!.start.year,
+                      _dateRange!.start.month,
+                      _dateRange!.start.day,
+                    ),
+                  ) &&
+                  o.dataEnvio.isBefore(
+                    DateTime(
+                      _dateRange!.end.year,
+                      _dateRange!.end.month,
+                      _dateRange!.end.day + 1,
+                    ),
+                  ));
+          return matchesQuery && matchesStatus && matchesDriver && matchesDate;
+        }).toList()..sort(
+          (a, b) => _newestFirst
+              ? b.dataEnvio.compareTo(a.dataEnvio)
+              : a.dataEnvio.compareTo(b.dataEnvio),
+        );
+    final pageCount = orders.isEmpty
+        ? 1
+        : (orders.length + _pageSize - 1) ~/ _pageSize;
+    final currentPage = _page.clamp(0, pageCount - 1);
+    final visibleOrders = orders.skip(currentPage * _pageSize).take(_pageSize);
     return ListView(
-      padding: EdgeInsets.all(
-        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
-      ),
+      padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 16 : 24),
       children: [
         SectionHeader(
           title: 'Pedidos e rastreamento',
-          subtitle: '${orders.length} pedidos encontrados · filtre por status, cliente ou código',
+          subtitle:
+              '${orders.length} pedidos encontrados · filtre por status, motorista ou período; busque também por placa',
           trailing: Wrap(
             spacing: 8,
             children: [
@@ -1056,11 +1313,11 @@ class _OrdersPageState extends State<OrdersPage> {
                       : 340,
                   child: TextField(
                     controller: _search,
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => setState(() => _page = 0),
                     decoration: const InputDecoration(
                       isDense: true,
                       prefixIcon: Icon(Icons.search_rounded),
-                      hintText: 'Buscar código, cliente ou destino...',
+                      hintText: 'Buscar pedido, motorista ou placa...',
                     ),
                   ),
                 ),
@@ -1085,9 +1342,61 @@ class _OrdersPageState extends State<OrdersPage> {
                           child: Text(status.label),
                         ),
                     ],
-                    onChanged: (value) => setState(() => _status = value),
+                    onChanged: (value) => setState(() {
+                      _status = value;
+                      _page = 0;
+                    }),
                   ),
                 ),
+                SizedBox(
+                  width: constraints.maxWidth < 230
+                      ? constraints.maxWidth
+                      : 230,
+                  child: DropdownButtonFormField<String?>(
+                    isExpanded: true,
+                    initialValue: _driverId,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      labelText: 'Motorista',
+                    ),
+                    items: [
+                      const DropdownMenuItem(
+                        value: null,
+                        child: Text('Todos os motoristas'),
+                      ),
+                      for (final driver in widget.store.drivers)
+                        DropdownMenuItem(
+                          value: driver.id,
+                          child: Text(
+                            '${driver.nome} · ${driver.placa}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                    onChanged: (value) => setState(() {
+                      _driverId = value;
+                      _page = 0;
+                    }),
+                  ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: _selectDateRange,
+                  icon: const Icon(Icons.date_range_rounded),
+                  label: Text(
+                    _dateRange == null
+                        ? 'Período'
+                        : '${fmtDate(_dateRange!.start)} – ${fmtDate(_dateRange!.end)}',
+                  ),
+                ),
+                if (_dateRange != null)
+                  IconButton(
+                    tooltip: 'Limpar período',
+                    onPressed: () => setState(() {
+                      _dateRange = null;
+                      _page = 0;
+                    }),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
                 OutlinedButton.icon(
                   onPressed: () => setState(() => _newestFirst = !_newestFirst),
                   icon: Icon(
@@ -1104,20 +1413,56 @@ class _OrdersPageState extends State<OrdersPage> {
           EmptyState(
             title: 'Nenhum pedido encontrado',
             message: 'Ajuste os filtros ou crie um pedido para começar.',
-            action: Button3D(label: 'Criar Pedido', icon: Icons.add_rounded, onPressed: () => showOrderForm(context, widget.store)),
+            action: Button3D(
+              label: 'Criar Pedido',
+              icon: Icons.add_rounded,
+              onPressed: () => showOrderForm(context, widget.store),
+            ),
           )
         else
-          for (final order in orders)
+          for (final order in visibleOrders)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: _OrderCard(order: order, store: widget.store),
             ),
+        if (orders.isNotEmpty && pageCount > 1)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Text(
+                  'Página ${currentPage + 1} de $pageCount',
+                  style: TextStyle(color: colors.muted),
+                ),
+                const Spacer(),
+                IconButton(
+                  tooltip: 'Página anterior',
+                  onPressed: currentPage > 0
+                      ? () => setState(() => _page = currentPage - 1)
+                      : null,
+                  icon: const Icon(Icons.chevron_left_rounded),
+                ),
+                IconButton(
+                  tooltip: 'Próxima página',
+                  onPressed: currentPage < pageCount - 1
+                      ? () => setState(() => _page = currentPage + 1)
+                      : null,
+                  icon: const Icon(Icons.chevron_right_rounded),
+                ),
+              ],
+            ),
+          ),
         const SizedBox(height: 22),
         Row(
           children: [
             Icon(Icons.info_outline_rounded, color: colors.muted, size: 16),
             const SizedBox(width: 8),
-            Expanded(child: Text('Atualizações e alterações são salvas localmente neste dispositivo.', style: TextStyle(color: colors.muted, fontSize: 11))),
+            Expanded(
+              child: Text(
+                'Atualizações e alterações são salvas localmente neste dispositivo.',
+                style: TextStyle(color: colors.muted, fontSize: 11),
+              ),
+            ),
           ],
         ),
       ],
@@ -1142,38 +1487,85 @@ class _OrderCard extends StatelessWidget {
         builder: (context, constraints) {
           final compact = constraints.maxWidth < 760;
           final info = Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(order.id, style: const TextStyle(fontWeight: FontWeight.w900)),
-                    StatusChip(status: order.status, late: late),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(order.cliente, style: TextStyle(color: colors.muted, fontSize: 12)),
-                const SizedBox(height: 5),
-                Text('${order.origem}  →  ${order.destino}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-              ],
-            );
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    order.id,
+                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  StatusChip(status: order.status, late: late),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                order.cliente,
+                style: TextStyle(color: colors.muted, fontSize: 12),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                '${order.origem}  →  ${order.destino}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ],
+          );
           final details = Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Previsão · ${fmtDate(order.previsaoEntrega)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-                Text(driver == null ? 'Motorista não vinculado' : driver.nome, style: TextStyle(color: colors.muted, fontSize: 11)),
-                const SizedBox(height: 4),
-                Text(kStages[order.stage], style: TextStyle(color: colors.accent, fontSize: 11, fontWeight: FontWeight.w700)),
-              ],
-            );
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Previsão · ${fmtDate(order.previsaoEntrega)}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                driver == null ? 'Motorista não vinculado' : driver.nome,
+                style: TextStyle(color: colors.muted, fontSize: 11),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                kStages[order.stage],
+                style: TextStyle(
+                  color: colors.accent,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          );
           final actions = Wrap(
             spacing: 2,
             children: [
-              IconButton(tooltip: 'Detalhes e rastreio', onPressed: () => showOrderDetails(context, store, order.id), icon: const Icon(Icons.visibility_outlined)),
-              IconButton(tooltip: 'Editar', onPressed: order.isActive ? () => showOrderForm(context, store, order: order) : null, icon: const Icon(Icons.edit_outlined)),
-              IconButton(tooltip: 'Etiqueta', onPressed: () => showLabelDialog(context, store, order), icon: const Icon(Icons.qr_code_2_rounded)),
-              IconButton(tooltip: 'WhatsApp', onPressed: order.telefone.isEmpty ? null : () => sendWhatsApp(context, order), icon: const Icon(Icons.chat_rounded)),
+              IconButton(
+                tooltip: 'Detalhes e rastreio',
+                onPressed: () => showOrderDetails(context, store, order.id),
+                icon: const Icon(Icons.visibility_outlined),
+              ),
+              IconButton(
+                tooltip: 'Editar',
+                onPressed: order.isActive
+                    ? () => showOrderForm(context, store, order: order)
+                    : null,
+                icon: const Icon(Icons.edit_outlined),
+              ),
+              IconButton(
+                tooltip: 'Etiqueta',
+                onPressed: () => showLabelDialog(context, store, order),
+                icon: const Icon(Icons.qr_code_2_rounded),
+              ),
+              IconButton(
+                tooltip: 'WhatsApp',
+                onPressed: order.telefone.isEmpty
+                    ? null
+                    : () => sendWhatsApp(context, order),
+                icon: const Icon(Icons.chat_rounded),
+              ),
               IconButton(
                 tooltip: 'Excluir pedido',
                 onPressed: () async {
@@ -1191,7 +1583,13 @@ class _OrderCard extends StatelessWidget {
           return compact
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [info, const SizedBox(height: 12), details, const SizedBox(height: 8), actions],
+                  children: [
+                    info,
+                    const SizedBox(height: 12),
+                    details,
+                    const SizedBox(height: 8),
+                    actions,
+                  ],
                 )
               : Row(
                   children: [
@@ -1213,19 +1611,21 @@ class FleetPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeOrders = store.orders.where((o) => o.isActive && o.motoristaId != null).toList();
+    final activeOrders = store.orders
+        .where((o) => o.isActive && o.motoristaId != null)
+        .toList();
     final drivers = store.settings.role == UserRole.motorista
         ? store.drivers
               .where((driver) => driver.id == store.settings.roleDriverId)
               .toList()
         : store.drivers;
     return ListView(
-      padding: EdgeInsets.all(
-        MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
-      ),
+      padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 16 : 24),
       children: [
         SectionHeader(
-          title: store.settings.role == UserRole.motorista ? 'Minhas rotas' : 'Frota e motoristas',
+          title: store.settings.role == UserRole.motorista
+              ? 'Minhas rotas'
+              : 'Frota e motoristas',
           subtitle: store.settings.role == UserRole.motorista
               ? 'Pedidos vinculados ao perfil atual'
               : '${store.availableDrivers} motoristas disponíveis · mapa de entregas ativas',
@@ -1233,8 +1633,17 @@ class FleetPage extends StatelessWidget {
               ? Wrap(
                   spacing: 8,
                   children: [
-                    Button3D(label: 'Vincular carga', icon: Icons.link_rounded, secondary: true, onPressed: () => showAssignDialog(context, store)),
-                    Button3D(label: 'Novo motorista', icon: Icons.person_add_alt_1_rounded, onPressed: () => showDriverForm(context, store)),
+                    Button3D(
+                      label: 'Vincular carga',
+                      icon: Icons.link_rounded,
+                      secondary: true,
+                      onPressed: () => showAssignDialog(context, store),
+                    ),
+                    Button3D(
+                      label: 'Novo motorista',
+                      icon: Icons.person_add_alt_1_rounded,
+                      onPressed: () => showDriverForm(context, store),
+                    ),
                   ],
                 )
               : null,
@@ -1248,7 +1657,11 @@ class FleetPage extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: drivers.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: constraints.maxWidth > 1180 ? 3 : constraints.maxWidth > 700 ? 2 : 1,
+              crossAxisCount: constraints.maxWidth > 1180
+                  ? 3
+                  : constraints.maxWidth > 700
+                  ? 2
+                  : 1,
               crossAxisSpacing: 14,
               mainAxisSpacing: 14,
               mainAxisExtent: constraints.maxWidth < 600 ? 280 : 240,
@@ -1283,7 +1696,10 @@ class _FleetMap extends StatelessWidget {
         child: Stack(
           children: [
             FlutterMap(
-              options: MapOptions(initialCenter: center, initialZoom: positioned.length > 1 ? 4.2 : 5.5),
+              options: MapOptions(
+                initialCenter: center,
+                initialZoom: positioned.length > 1 ? 4.2 : 5.5,
+              ),
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -1295,7 +1711,8 @@ class _FleetMap extends StatelessWidget {
                       Polyline(
                         points: [
                           for (final order in positioned)
-                            if (orderPosition(order) != null) orderPosition(order)!,
+                            if (orderPosition(order) != null)
+                              orderPosition(order)!,
                         ],
                         color: colors.accent2.withValues(alpha: .8),
                         strokeWidth: 3,
@@ -1324,7 +1741,9 @@ class _FleetMap extends StatelessWidget {
                   ],
                 ),
                 const RichAttributionWidget(
-                  attributions: [TextSourceAttribution('© OpenStreetMap contributors')],
+                  attributions: [
+                    TextSourceAttribution('© OpenStreetMap contributors'),
+                  ],
                 ),
               ],
             ),
@@ -1333,15 +1752,27 @@ class _FleetMap extends StatelessWidget {
               top: 12,
               child: Glass(
                 radius: 12,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Text('Mapa de posições estimadas · ${positioned.length} cargas', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'Mapa de posições estimadas · ${positioned.length} cargas',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ),
             if (positioned.isEmpty)
               Center(
                 child: Glass(
                   padding: const EdgeInsets.all(14),
-                  child: Text('Vincule pedidos com cidades cadastradas para visualizar cargas.', style: TextStyle(color: colors.text)),
+                  child: Text(
+                    'Vincule pedidos com cidades cadastradas para visualizar cargas.',
+                    style: TextStyle(color: colors.text),
+                  ),
                 ),
               ),
           ],
@@ -1372,14 +1803,32 @@ class _DriverCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon3D(icon: Icons.person_rounded, color: driverColor, motion: driver.status == DriverStatus.emRota ? IconMotion.drive : IconMotion.tilt, loop: driver.status == DriverStatus.emRota, size: 44),
+              Icon3D(
+                icon: Icons.person_rounded,
+                color: driverColor,
+                motion: driver.status == DriverStatus.emRota
+                    ? IconMotion.drive
+                    : IconMotion.tilt,
+                loop: driver.status == DriverStatus.emRota,
+                size: 44,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(driver.nome, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800)),
-                    Text('${driver.veiculo} · ${driver.placa}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: colors.muted, fontSize: 11)),
+                    Text(
+                      driver.nome,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      '${driver.veiculo} · ${driver.placa}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: colors.muted, fontSize: 11),
+                    ),
                   ],
                 ),
               ),
@@ -1391,13 +1840,20 @@ class _DriverCard extends StatelessWidget {
                 ),
                 child: Text(
                   driver.status.label,
-                  style: TextStyle(color: driverColor, fontSize: 11, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: driverColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          Text('${assigned.length} entrega(s) ativa(s)', style: TextStyle(color: colors.muted, fontSize: 12)),
+          Text(
+            '${assigned.length} entrega(s) ativa(s)',
+            style: TextStyle(color: colors.muted, fontSize: 12),
+          ),
           const SizedBox(height: 6),
           if (assigned.isNotEmpty)
             Text(
@@ -1407,27 +1863,33 @@ class _DriverCard extends StatelessWidget {
               style: const TextStyle(fontSize: 12, height: 1.4),
             )
           else
-            Text('Sem pedidos em andamento', style: TextStyle(color: colors.muted, fontSize: 12)),
+            Text(
+              'Sem pedidos em andamento',
+              style: TextStyle(color: colors.muted, fontSize: 12),
+            ),
           const Spacer(),
           Wrap(
             spacing: 6,
             children: [
               if (store.settings.role == UserRole.admin)
                 OutlinedButton.icon(
-                  onPressed: () => showAssignDialog(context, store, driverId: driver.id),
+                  onPressed: () =>
+                      showAssignDialog(context, store, driverId: driver.id),
                   icon: const Icon(Icons.link_rounded, size: 16),
                   label: const Text('Vincular carga'),
                 ),
               if (assigned.length > 1)
                 TextButton.icon(
-                  onPressed: () => _showOptimizedRoute(context, driver, assigned),
+                  onPressed: () =>
+                      _showOptimizedRoute(context, driver, assigned),
                   icon: const Icon(Icons.alt_route_rounded, size: 16),
                   label: const Text('Otimizar rota'),
                 ),
               if (store.settings.role == UserRole.admin)
                 IconButton(
                   tooltip: 'Editar motorista',
-                  onPressed: () => showDriverForm(context, store, driver: driver),
+                  onPressed: () =>
+                      showDriverForm(context, store, driver: driver),
                   icon: const Icon(Icons.edit_outlined),
                 ),
             ],
@@ -1442,7 +1904,8 @@ class _DriverCard extends StatelessWidget {
     Driver driver,
     List<Order> assigned,
   ) async {
-    final start = cityPos(assigned.first.origem) ?? const LatLng(-23.5505, -46.6333);
+    final start =
+        cityPos(assigned.first.origem) ?? const LatLng(-23.5505, -46.6333);
     final stops = <RouteStop>[
       for (final order in assigned)
         if (cityPos(order.destino) case final point?) RouteStop(order, point),
@@ -1462,7 +1925,9 @@ class _DriverCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Estimativa em linha reta: ${route.optimizedKm.toStringAsFixed(0)} km'),
+            Text(
+              'Estimativa em linha reta: ${route.optimizedKm.toStringAsFixed(0)} km',
+            ),
             Text('Redução estimada: ${route.savedKm.toStringAsFixed(0)} km'),
             const SizedBox(height: 12),
             for (var i = 0; i < route.stops.length; i++)
@@ -1470,10 +1935,15 @@ class _DriverCard extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: CircleAvatar(radius: 15, child: Text('${i + 1}')),
                 title: Text(route.stops[i].order.id),
-                subtitle: Text('${route.stops[i].order.cliente} · ${route.stops[i].order.destino}'),
+                subtitle: Text(
+                  '${route.stops[i].order.cliente} · ${route.stops[i].order.destino}',
+                ),
               ),
             const SizedBox(height: 8),
-            Text('Sequência calculada por vizinho mais próximo e refinamento 2-opt. Distâncias são aproximadas.', style: TextStyle(color: context.ac.muted, fontSize: 11)),
+            Text(
+              'Sequência calculada por vizinho mais próximo e refinamento 2-opt. Distâncias são aproximadas.',
+              style: TextStyle(color: context.ac.muted, fontSize: 11),
+            ),
           ],
         ),
       ),
@@ -1482,7 +1952,11 @@ class _DriverCard extends StatelessWidget {
 }
 
 class PublicTrackingPage extends StatefulWidget {
-  const PublicTrackingPage({required this.store, this.initialCode = '', super.key});
+  const PublicTrackingPage({
+    required this.store,
+    this.initialCode = '',
+    super.key,
+  });
 
   final AtlasStore store;
   final String initialCode;
@@ -1492,7 +1966,9 @@ class PublicTrackingPage extends StatefulWidget {
 }
 
 class _PublicTrackingPageState extends State<PublicTrackingPage> {
-  late final TextEditingController _code = TextEditingController(text: widget.initialCode);
+  late final TextEditingController _code = TextEditingController(
+    text: widget.initialCode,
+  );
   Order? _order;
   bool _searched = false;
 
@@ -1531,11 +2007,25 @@ class _PublicTrackingPageState extends State<PublicTrackingPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 28),
-                  const Icon3D(icon: Icons.local_shipping_rounded, color: Color(0xFF0891B2), size: 66, motion: IconMotion.drive, loop: true),
+                  const Icon3D(
+                    icon: Icons.local_shipping_rounded,
+                    color: Color(0xFF0891B2),
+                    size: 66,
+                    motion: IconMotion.drive,
+                    loop: true,
+                  ),
                   const SizedBox(height: 16),
-                  const Text('Acompanhe sua entrega', textAlign: TextAlign.center, style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
+                  const Text(
+                    'Acompanhe sua entrega',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+                  ),
                   const SizedBox(height: 6),
-                  Text('Digite o código de rastreio informado pela transportadora.', textAlign: TextAlign.center, style: TextStyle(color: colors.muted)),
+                  Text(
+                    'Digite o código de rastreio informado pela transportadora.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.muted),
+                  ),
                   const SizedBox(height: 22),
                   Row(
                     children: [
@@ -1544,16 +2034,26 @@ class _PublicTrackingPageState extends State<PublicTrackingPage> {
                           controller: _code,
                           textCapitalization: TextCapitalization.characters,
                           onSubmitted: (_) => _lookup(),
-                          decoration: const InputDecoration(labelText: 'Código de rastreio', hintText: 'ATL-2400'),
+                          decoration: const InputDecoration(
+                            labelText: 'Código de rastreio',
+                            hintText: 'ATL-2400',
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Button3D(label: 'Rastrear', icon: Icons.search_rounded, onPressed: _lookup),
+                      Button3D(
+                        label: 'Rastrear',
+                        icon: Icons.search_rounded,
+                        onPressed: _lookup,
+                      ),
                     ],
                   ),
                   if (_searched && order == null) ...[
                     const SizedBox(height: 18),
-                    const EmptyState(title: 'Pedido não localizado', message: 'Confira o código e tente novamente.'),
+                    const EmptyState(
+                      title: 'Pedido não localizado',
+                      message: 'Confira o código e tente novamente.',
+                    ),
                   ],
                   if (order != null) ...[
                     const SizedBox(height: 20),
@@ -1563,25 +2063,52 @@ class _PublicTrackingPageState extends State<PublicTrackingPage> {
                         children: [
                           Row(
                             children: [
-                              Expanded(child: Text('${order.id} · ${order.cliente}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17))),
-                              StatusChip(status: order.status, late: order.isLate(widget.store.now)),
+                              Expanded(
+                                child: Text(
+                                  '${order.id} · ${order.cliente}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ),
+                              StatusChip(
+                                status: order.status,
+                                late: order.isLate(widget.store.now),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 14),
-                          Text('${order.origem}  →  ${order.destino}', style: TextStyle(color: colors.muted)),
+                          Text(
+                            '${order.origem}  →  ${order.destino}',
+                            style: TextStyle(color: colors.muted),
+                          ),
                           const SizedBox(height: 6),
-                          Text('Previsão de entrega: ${fmtDate(order.previsaoEntrega)}', style: const TextStyle(fontWeight: FontWeight.w700)),
+                          Text(
+                            'Previsão de entrega: ${fmtDate(order.previsaoEntrega)}',
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
                           const SizedBox(height: 20),
                           for (var i = 0; i < kStages.length; i++)
                             _TrackingStage(order: order, index: i),
                           if (order.status == OrderStatus.cancelado)
-                            Text('Este pedido foi cancelado.', style: TextStyle(color: colors.danger, fontWeight: FontWeight.w700)),
+                            Text(
+                              'Este pedido foi cancelado.',
+                              style: TextStyle(
+                                color: colors.danger,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                         ],
                       ),
                     ),
                   ],
                   const SizedBox(height: 24),
-                  Text('Informações exibidas correspondem aos dados locais de demonstração.', textAlign: TextAlign.center, style: TextStyle(color: colors.muted, fontSize: 11)),
+                  Text(
+                    'Informações exibidas correspondem aos dados locais de demonstração.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.muted, fontSize: 11),
+                  ),
                 ],
               ),
             ),
@@ -1602,7 +2129,9 @@ class _TrackingStage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.ac;
     final done = index <= order.stage && !order.cancelled;
-    final entry = order.historico.where((e) => e.label == kStages[index]).firstOrNull;
+    final entry = order.historico
+        .where((e) => e.label == kStages[index])
+        .firstOrNull;
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Row(
@@ -1611,7 +2140,13 @@ class _TrackingStage extends StatelessWidget {
           Column(
             children: [
               Icon3D(
-                icon: const [Icons.assignment_turned_in_rounded, Icons.inventory_2_rounded, Icons.local_shipping_rounded, Icons.route_rounded, Icons.verified_rounded][index],
+                icon: const [
+                  Icons.assignment_turned_in_rounded,
+                  Icons.inventory_2_rounded,
+                  Icons.local_shipping_rounded,
+                  Icons.route_rounded,
+                  Icons.verified_rounded,
+                ][index],
                 color: done ? colors.success : colors.border,
                 size: 40,
                 motion: index == 2 ? IconMotion.drive : IconMotion.pop,
@@ -1619,7 +2154,11 @@ class _TrackingStage extends StatelessWidget {
                 muted: !done,
               ),
               if (index < kStages.length - 1)
-                Container(width: 2, height: 20, color: done ? colors.success : colors.border),
+                Container(
+                  width: 2,
+                  height: 20,
+                  color: done ? colors.success : colors.border,
+                ),
             ],
           ),
           const SizedBox(width: 12),
@@ -1629,14 +2168,31 @@ class _TrackingStage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(kStages[index], style: TextStyle(fontWeight: FontWeight.w800, color: done ? colors.text : colors.muted)),
-                  if (entry != null) Text(fmtDateTime(entry.date), style: TextStyle(color: colors.muted, fontSize: 11)),
+                  Text(
+                    kStages[index],
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: done ? colors.text : colors.muted,
+                    ),
+                  ),
+                  if (entry != null)
+                    Text(
+                      fmtDateTime(entry.date),
+                      style: TextStyle(color: colors.muted, fontSize: 11),
+                    ),
                 ],
               ),
             ),
           ),
           if (index == order.stage && order.isActive)
-            Text('ATUAL', style: TextStyle(color: colors.accent, fontSize: 10, fontWeight: FontWeight.w900)),
+            Text(
+              'ATUAL',
+              style: TextStyle(
+                color: colors.accent,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
         ],
       ),
     );

@@ -31,7 +31,10 @@ void main() {
     await tester.pump();
 
     expect(find.text('Olá, Leona'), findsOneWidget);
-    expect(find.text('Total de envios'), findsOneWidget);
+    expect(find.text('Veículos ativos'), findsOneWidget);
+    expect(find.text('Entregas em andamento'), findsOneWidget);
+    expect(find.text('Atrasos'), findsOneWidget);
+    expect(find.text('Em manutenção'), findsOneWidget);
     expect(find.text('CENTRAL DE OPERAÇÕES'), findsOneWidget);
   });
 
@@ -49,7 +52,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Pedidos e rastreamento'), findsOneWidget);
-    expect(find.text('Buscar código, cliente ou destino...'), findsOneWidget);
+    expect(find.text('Buscar pedido, motorista ou placa...'), findsOneWidget);
   });
 
   testWidgets('keeps login, dashboard, and orders usable on a phone', (
@@ -71,7 +74,7 @@ void main() {
     await tester.tap(find.text('Entrar no ambiente de teste'));
     await tester.pump(const Duration(milliseconds: 350));
     await tester.pump();
-    expect(find.text('Total de envios'), findsOneWidget);
+    expect(find.text('Veículos ativos'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -84,7 +87,34 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
     await tester.pump();
     expect(find.text('Pedidos e rastreamento'), findsOneWidget);
-    expect(find.text('Buscar código, cliente ou destino...'), findsOneWidget);
+    expect(find.text('Buscar pedido, motorista ou placa...'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  for (final size in [
+    const Size(360, 800),
+    const Size(768, 1024),
+    const Size(1024, 768),
+    const Size(1440, 900),
+  ]) {
+    testWidgets('avoids layout overflow at ${size.width.toInt()} px', (
+      tester,
+    ) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await loadApp(tester);
+      expect(find.text('Bem-vindo'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.ensureVisible(find.text('Entrar no ambiente de teste'));
+      await tester.tap(find.text('Entrar no ambiente de teste'));
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump();
+      expect(find.text('Veículos ativos'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
 }
