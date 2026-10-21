@@ -9,6 +9,7 @@ import '../core/geo.dart';
 import '../core/theme.dart';
 import '../models/models.dart';
 import '../services/store.dart';
+import '../widgets/atlas_logo_3d.dart';
 import '../widgets/button3d.dart';
 import '../widgets/common.dart';
 import '../widgets/extras_dialogs.dart';
@@ -109,7 +110,18 @@ class _LogisticsShellState extends State<LogisticsShell> {
                 final mobilePages = _mobilePages.where(_canSee).toList();
                 return Scaffold(
                   appBar: AppBar(
-                    title: Text(_page == 'Dashboard' ? 'ATLAS-LOG' : _page),
+                    title: Row(
+                      children: [
+                        const AtlasLogo3D(size: 34),
+                        const SizedBox(width: 9),
+                        Expanded(
+                          child: Text(
+                            _page == 'Dashboard' ? 'ATLAS-LOG' : _page,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                     leading: Builder(
                       builder: (context) => IconButton(
                         tooltip: 'Abrir menu',
@@ -271,24 +283,7 @@ class _Sidebar extends StatelessWidget {
               padding: EdgeInsets.all(collapsed ? 16 : 22),
               child: Row(
                 children: [
-                  const Icon3D(
-                    icon: Icons.local_shipping_rounded,
-                    color: Color(0xFF0891B2),
-                    motion: IconMotion.drive,
-                    size: 42,
-                  ),
-                  if (!collapsed) ...[
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('ATLAS-LOG', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: .6)),
-                          Text('GESTÃO LOGÍSTICA', style: TextStyle(fontSize: 9, letterSpacing: 1.1)),
-                        ],
-                      ),
-                    ),
-                  ],
+                  AtlasLogo3D(size: collapsed ? 42 : 44, showWordmark: !collapsed),
                 ],
               ),
             ),
@@ -421,6 +416,8 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
       child: Row(
         children: [
+          const AtlasLogo3D(size: 40),
+          const SizedBox(width: 14),
           Expanded(
             child: Text(
               title == 'Dashboard' ? 'Visão geral da operação' : title,

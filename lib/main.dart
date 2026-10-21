@@ -5,9 +5,9 @@ import 'core/theme.dart';
 import 'models/models.dart';
 import 'pages/logistics_pages.dart';
 import 'services/store.dart';
+import 'widgets/atlas_logo_3d.dart';
 import 'widgets/button3d.dart';
 import 'widgets/common.dart';
-import 'widgets/icon3d.dart';
 
 void main() {
   runApp(const AtlasLogApp());
@@ -191,13 +191,7 @@ class _LoginPageState extends State<_LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Icon3D(
-          icon: Icons.local_shipping_rounded,
-          color: Color(0xFF0891B2),
-          motion: IconMotion.drive,
-          size: 72,
-          loop: true,
-        ),
+        const AtlasLogo3D(size: 88),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
