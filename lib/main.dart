@@ -24,7 +24,7 @@ class _AtlasLogAppState extends State<AtlasLogApp> {
   AtlasStore? _store;
   Object? _startupError;
   bool _signedIn = false;
-  String _name = 'Leona';
+  String _name = '';
   UserRole _loginRole = UserRole.admin;
 
   @override
@@ -105,7 +105,9 @@ class _AtlasLogAppState extends State<AtlasLogApp> {
               onLogin: () {
                 store.updateSettings((settings) {
                   settings
-                    ..userName = _name.trim().isEmpty ? 'Operador Atlas' : _name.trim()
+                    ..userName = _name.trim().isEmpty
+                        ? 'Operador Atlas'
+                        : _name.trim()
                     ..role = _loginRole;
                 });
                 setState(() => _signedIn = true);
@@ -137,7 +139,9 @@ class _LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<_LoginPage> {
-  late final TextEditingController _name = TextEditingController(text: widget.name);
+  late final TextEditingController _name = TextEditingController(
+    text: widget.name,
+  );
 
   @override
   void dispose() {
@@ -149,143 +153,204 @@ class _LoginPageState extends State<_LoginPage> {
   Widget build(BuildContext context) {
     final colors = context.ac;
     return Scaffold(
-      body: Center(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              center: const Alignment(-0.85, -0.9),
-              radius: 1.6,
-              colors: [
-                colors.accent.withValues(alpha: colors.dark ? 0.16 : 0.1),
-                colors.bg,
-              ],
-            ),
-          ),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1040),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final form = _loginForm(context, colors);
-                    if (constraints.maxWidth < 760) {
-                      return Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 400),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const AtlasLogo3D(size: 68, showWordmark: true),
-                              const SizedBox(height: 22),
-                              form,
-                            ],
-                          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final mobile = constraints.maxWidth < 980;
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: const Alignment(-0.85, -0.9),
+                      radius: 1.6,
+                      colors: [
+                        colors.accent.withValues(
+                          alpha: colors.dark ? 0.2 : 0.12,
                         ),
-                      );
-                    }
-                    return Row(
-                      children: [
-                        Expanded(child: _brandPanel(colors)),
-                        const SizedBox(width: 28),
-                        SizedBox(width: 400, child: form),
+                        colors.bg,
                       ],
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
+              Positioned(
+                top: -110,
+                left: -100,
+                child: _ambientGlow(colors, 320),
+              ),
+              Positioned(
+                right: -130,
+                bottom: -150,
+                child: _ambientGlow(colors, 380),
+              ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(mobile ? 16 : 40),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: _welcomePanel(colors, mobile: mobile),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _brandPanel(AtlasColors colors) => Container(
-    constraints: const BoxConstraints(minHeight: 480),
-    padding: const EdgeInsets.all(38),
+  Widget _ambientGlow(AtlasColors colors, double size) => Container(
+    width: size,
+    height: size,
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(32),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [colors.card, colors.bg],
-      ),
-      border: Border.all(color: colors.accent.withValues(alpha: 0.4)),
+      shape: BoxShape.circle,
+      color: colors.accent.withValues(alpha: 0.05),
       boxShadow: [
         BoxShadow(
-          color: colors.accent.withValues(alpha: colors.dark ? 0.12 : 0.08),
-          blurRadius: 40,
-          spreadRadius: 2,
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const AtlasLogo3D(size: 88),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'ATLAS-LOG',
-              style: TextStyle(
-                color: colors.text,
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Gestão logística, rastreamento e operação em um só lugar.',
-              style: TextStyle(color: colors.muted, fontSize: 16, height: 1.5),
-            ),
-          ],
-        ),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: const [
-            _FeaturePill(icon: Icons.route_rounded, label: 'Rotas'),
-            _FeaturePill(icon: Icons.inventory_2_rounded, label: 'Pedidos'),
-            _FeaturePill(icon: Icons.insights_rounded, label: 'Métricas'),
-          ],
+          color: colors.accent.withValues(alpha: 0.12),
+          blurRadius: 100,
+          spreadRadius: 32,
         ),
       ],
     ),
   );
 
-  Widget _loginForm(BuildContext context, AtlasColors colors) => Container(
+  Widget _welcomePanel(AtlasColors colors, {required bool mobile}) => Container(
+    constraints: BoxConstraints(minHeight: mobile ? 0 : 560),
+    padding: EdgeInsets.all(mobile ? 20 : 42),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(mobile ? 26 : 34),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: colors.dark
+            ? const [Color(0xFF0B314B), Color(0xFF071B2D), Color(0xFF061625)]
+            : [colors.surface, colors.bg, const Color(0xFFDDEFF5)],
+      ),
+      border: Border.all(color: colors.accent.withValues(alpha: 0.42)),
       boxShadow: [
         BoxShadow(
-          color: colors.accent.withValues(alpha: colors.dark ? 0.14 : 0.08),
-          blurRadius: 34,
+          color: colors.accent.withValues(alpha: colors.dark ? 0.2 : 0.12),
+          blurRadius: 58,
+          spreadRadius: 1,
+          offset: const Offset(0, 18),
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: colors.dark ? 0.35 : 0.08),
+          blurRadius: 30,
+          offset: const Offset(0, 20),
+        ),
+      ],
+    ),
+    child: mobile
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _brandContent(colors, mobile: true),
+              const SizedBox(height: 28),
+              _loginForm(context, colors),
+            ],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: _brandContent(colors, mobile: false)),
+              const SizedBox(width: 48),
+              SizedBox(width: 390, child: _loginForm(context, colors)),
+            ],
+          ),
+  );
+
+  Widget _brandContent(AtlasColors colors, {required bool mobile}) => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: mobile
+        ? CrossAxisAlignment.center
+        : CrossAxisAlignment.start,
+    children: [
+      AtlasLogo3D(size: mobile ? 126 : 184),
+      SizedBox(height: mobile ? 10 : 4),
+      Text(
+        'ATLAS-LOG',
+        textAlign: mobile ? TextAlign.center : TextAlign.start,
+        style: TextStyle(
+          color: colors.text,
+          fontSize: mobile ? 30 : 42,
+          fontWeight: FontWeight.w900,
+          letterSpacing: mobile ? 1 : 1.4,
+          height: 1.1,
+          shadows: [
+            Shadow(
+              color: colors.accent.withValues(alpha: 0.42),
+              blurRadius: 20,
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 12),
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: Text(
+          'Gestão logística, rastreamento e operação em um só lugar.',
+          textAlign: mobile ? TextAlign.center : TextAlign.start,
+          style: TextStyle(
+            color: colors.muted,
+            fontSize: mobile ? 14 : 17,
+            height: 1.5,
+          ),
+        ),
+      ),
+      SizedBox(height: mobile ? 18 : 28),
+      Wrap(
+        alignment: mobile ? WrapAlignment.center : WrapAlignment.start,
+        spacing: 10,
+        runSpacing: 10,
+        children: const [
+          _FeaturePill(icon: Icons.route_rounded, label: 'Rotas'),
+          _FeaturePill(icon: Icons.inventory_2_rounded, label: 'Pedidos'),
+          _FeaturePill(icon: Icons.insights_rounded, label: 'Métricas'),
+        ],
+      ),
+    ],
+  );
+
+  Widget _loginForm(BuildContext context, AtlasColors colors) => Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: [
+        BoxShadow(
+          color: colors.accent.withValues(alpha: colors.dark ? 0.2 : 0.12),
+          blurRadius: 38,
           spreadRadius: 1,
         ),
       ],
     ),
     child: Glass(
-      radius: 22,
-      blur: 22,
-      opacity: colors.dark ? 0.76 : 0.9,
-      padding: const EdgeInsets.all(28),
+      radius: 24,
+      blur: 24,
+      opacity: colors.dark ? 0.82 : 0.94,
+      padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 420 ? 20 : 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Bem-vindo', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)),
+          const Text(
+            'Bem-vindo',
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+          ),
           const SizedBox(height: 5),
-          Text('Entre para acessar o ambiente local de demonstração.', style: TextStyle(color: colors.muted)),
+          Text(
+            'Acesse seu ambiente de gestão logística.',
+            style: TextStyle(color: colors.muted),
+          ),
           const SizedBox(height: 24),
           TextField(
             controller: _name,
             onChanged: widget.onNameChanged,
             textInputAction: TextInputAction.done,
             decoration: const InputDecoration(
-              labelText: 'Nome para demonstração',
+              labelText: 'Seu nome',
               prefixIcon: Icon(Icons.person_outline_rounded),
             ),
           ),
@@ -349,7 +414,10 @@ class _FeaturePill extends StatelessWidget {
           children: [
             Icon(icon, size: 15, color: colors.accent),
             const SizedBox(width: 7),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+            Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+            ),
           ],
         ),
       ),

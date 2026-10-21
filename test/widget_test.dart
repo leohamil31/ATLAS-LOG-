@@ -21,6 +21,11 @@ void main() {
     await loadApp(tester);
 
     expect(find.text('Bem-vindo'), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+    await tester.enterText(find.byType(TextField), 'Leona');
     await tester.ensureVisible(find.text('Entrar no ambiente de teste'));
     await tester.tap(find.text('Entrar no ambiente de teste'));
     await tester.pump();
@@ -32,6 +37,7 @@ void main() {
 
   testWidgets('navigates to the searchable order list', (tester) async {
     await loadApp(tester);
+    await tester.ensureVisible(find.text('Entrar no ambiente de teste'));
     await tester.tap(find.text('Entrar no ambiente de teste'));
     await tester.pump();
 
@@ -56,6 +62,10 @@ void main() {
 
     await loadApp(tester);
     expect(find.byType(AtlasLogo3D), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
     expect(tester.takeException(), isNull);
 
     await tester.tap(find.text('Entrar no ambiente de teste'));
