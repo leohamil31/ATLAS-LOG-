@@ -1,4 +1,4 @@
-/// Ícone com animação sutil, sem azulejo, brilho plástico ou sombra pesada.
+/// Ícone em placa azul com volume leve, sem sombras marcadas.
 library;
 
 import 'dart:math' as math;
@@ -118,6 +118,10 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final c = widget.muted ? context.ac.border : widget.color;
+    final light = Color.lerp(c, Colors.white, 0.24)!;
+    final dark = Color.lerp(c, Colors.black, 0.18)!;
+    final radius = widget.size * 0.28;
     final glyphColor = widget.muted ? context.ac.muted : widget.color;
 
     return MouseRegion(
@@ -131,10 +135,26 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
       },
       child: AnimatedBuilder(
         animation: _c,
-        builder: (_, _) => SizedBox(
+        builder: (_, _) => Container(
           width: widget.size,
           height: widget.size,
-          child: Center(child: _glyph(_c.value, glyphColor)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(radius),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [light, c, dark],
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.18),
+            ),
+          ),
+          child: Center(
+            child: _glyph(
+              _c.value,
+              widget.muted ? glyphColor : Colors.white,
+            ),
+          ),
         ),
       ),
     );

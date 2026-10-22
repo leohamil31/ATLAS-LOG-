@@ -323,39 +323,42 @@ class _Sidebar extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 5),
                       child: Tooltip(
                         message: collapsed ? item.$1 : '',
-                        child: ListTile(
-                          selected: selected == item.$1,
-                          selectedTileColor: colors.accent.withValues(
-                            alpha: .14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          leading: Icon3D(
-                            icon: item.$2,
-                            color: selected == item.$1
-                                ? colors.accent2
-                                : colors.muted,
-                            size: 36,
-                            animate: selected == item.$1,
-                            motion: item.$1 == 'Configurações'
-                                ? IconMotion.spin
-                                : IconMotion.tilt,
-                          ),
-                          title: collapsed
-                              ? null
-                              : Text(
-                                  item.$1,
-                                  style: TextStyle(
-                                    fontWeight: selected == item.$1
-                                        ? FontWeight.w800
-                                        : FontWeight.w500,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: ListTile(
+                            selected: selected == item.$1,
+                            selectedTileColor: colors.accent.withValues(
+                              alpha: .14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13),
+                            ),
+                            leading: Icon3D(
+                              icon: item.$2,
+                              color: selected == item.$1
+                                  ? colors.accent2
+                                  : colors.muted,
+                              size: 36,
+                              animate: selected == item.$1,
+                              motion: item.$1 == 'Configurações'
+                                  ? IconMotion.spin
+                                  : IconMotion.tilt,
+                            ),
+                            title: collapsed
+                                ? null
+                                : Text(
+                                    item.$1,
+                                    style: TextStyle(
+                                      fontWeight: selected == item.$1
+                                          ? FontWeight.w800
+                                          : FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                          trailing: !collapsed && item.$1 == 'Pedidos'
-                              ? _NavCount(count: store.inTransitCount)
-                              : null,
-                          onTap: () => onSelect(item.$1),
+                            trailing: !collapsed && item.$1 == 'Pedidos'
+                                ? _NavCount(count: store.inTransitCount)
+                                : null,
+                            onTap: () => onSelect(item.$1),
+                          ),
                         ),
                       ),
                     ),
