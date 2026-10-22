@@ -1,4 +1,4 @@
-/// Ícone em placa azul com volume leve, sem sombras marcadas.
+/// Ícone em bloco arredondado e simples, inspirado nos ícones do iPhone.
 library;
 
 import 'dart:math' as math;
@@ -101,17 +101,17 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
           alignment: Alignment.center,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.01)
-            ..rotateY(w * 0.7)
-            ..rotateX(w * 0.15),
+            ..rotateY(w * 0.12)
+            ..rotateX(w * 0.04),
           child: g,
         );
       case IconMotion.pulse:
-        g = Transform.scale(scale: 1 + 0.16 * (0.5 + 0.5 * w), child: g);
+        g = Transform.scale(scale: 1 + 0.045 * (0.5 + 0.5 * w), child: g);
       case IconMotion.pop:
-        final p = Curves.elasticOut.transform(math.min(1, t * 1.6));
-        g = Transform.scale(scale: t == 0 ? 1 : 0.7 + 0.3 * p, child: g);
+        final p = Curves.easeOut.transform(math.min(1, t * 1.6));
+        g = Transform.scale(scale: t == 0 ? 1 : 0.94 + 0.06 * p, child: g);
       case IconMotion.bounce:
-        g = Transform.translate(offset: Offset(0, -w.abs() * 3), child: g);
+        g = Transform.translate(offset: Offset(0, -w.abs() * 1.2), child: g);
     }
     return g;
   }
@@ -119,9 +119,8 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final c = widget.muted ? context.ac.border : widget.color;
-    final light = Color.lerp(c, Colors.white, 0.24)!;
-    final dark = Color.lerp(c, Colors.black, 0.18)!;
-    final radius = widget.size * 0.28;
+    final light = Color.lerp(c, Colors.white, 0.12)!;
+    final radius = widget.size * 0.26;
     final glyphColor = widget.muted ? context.ac.muted : widget.color;
 
     return MouseRegion(
@@ -143,17 +142,12 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [light, c, dark],
+              colors: [light, c],
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.18),
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: Center(
-            child: _glyph(
-              _c.value,
-              widget.muted ? glyphColor : Colors.white,
-            ),
+            child: _glyph(_c.value, widget.muted ? glyphColor : Colors.white),
           ),
         ),
       ),
