@@ -1,5 +1,4 @@
-/// Ícone com aparência 3D: azulejo em gradiente com brilho, sombras em
-/// camadas e animação própria do glifo (giro, deslize, inclinação 3D...).
+/// Ícone com animação sutil, sem azulejo, brilho plástico ou sombra pesada.
 library;
 
 import 'dart:math' as math;
@@ -86,11 +85,8 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
   }
 
   Widget _glyph(double t, Color glyphColor) {
-    final s = widget.size * 0.54;
-    final shadow = [
-      Shadow(color: Colors.black.withValues(alpha: 0.35), offset: const Offset(0, 2), blurRadius: 3),
-    ];
-    Widget g = Icon(widget.icon, size: s, color: glyphColor, shadows: shadow);
+    final s = widget.size * 0.62;
+    Widget g = Icon(widget.icon, size: s, color: glyphColor);
     final w = math.sin(t * math.pi * 2);
     switch (widget.motion) {
       case IconMotion.spin:
@@ -122,11 +118,7 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final c = widget.muted ? context.ac.border : widget.color;
-    final light = Color.lerp(c, Colors.white, 0.35)!;
-    final dark = Color.lerp(c, Colors.black, 0.35)!;
-    final r = widget.size * 0.3;
-    final glyphColor = widget.muted ? context.ac.muted : Colors.white;
+    final glyphColor = widget.muted ? context.ac.muted : widget.color;
 
     return MouseRegion(
       onEnter: (_) {
@@ -139,55 +131,10 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
       },
       child: AnimatedBuilder(
         animation: _c,
-        builder: (_, _) => Container(
+        builder: (_, _) => SizedBox(
           width: widget.size,
           height: widget.size,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(r),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [light, c, dark],
-              stops: const [0, 0.5, 1],
-            ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1),
-            boxShadow: widget.muted
-                ? null
-                : [
-                    BoxShadow(color: dark.withValues(alpha: 0.9), offset: Offset(0, widget.size * 0.07)),
-                    BoxShadow(
-                      color: c.withValues(alpha: 0.35 + 0.25 * _c.value),
-                      blurRadius: 10 + 8 * _c.value,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Brilho especular na metade de cima.
-              Positioned(
-                top: 1,
-                left: 2,
-                right: 2,
-                height: widget.size * 0.42,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(r),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.38),
-                        Colors.white.withValues(alpha: 0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              _glyph(_c.value, glyphColor),
-            ],
-          ),
+          child: Center(child: _glyph(_c.value, glyphColor)),
         ),
       ),
     );
