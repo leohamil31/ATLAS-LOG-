@@ -372,31 +372,34 @@ class _Sidebar extends StatelessWidget {
                 icon: const Icon(Icons.menu_rounded),
               ),
             Divider(color: colors.border, height: 1),
-            ListTile(
-              leading: CircleAvatar(
-                backgroundColor: colors.accent2,
-                foregroundColor: Colors.white,
-                child: Text(
-                  store.settings.userName.isEmpty
-                      ? 'A'
-                      : store.settings.userName[0].toUpperCase(),
+            Material(
+              type: MaterialType.transparency,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: colors.accent2,
+                  foregroundColor: Colors.white,
+                  child: Text(
+                    store.settings.userName.isEmpty
+                        ? 'A'
+                        : store.settings.userName[0].toUpperCase(),
+                  ),
                 ),
+                title: collapsed
+                    ? null
+                    : Text(
+                        store.settings.userName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                subtitle: collapsed
+                    ? null
+                    : Text(
+                        store.settings.role.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                onTap: () => onSelect('Configurações'),
               ),
-              title: collapsed
-                  ? null
-                  : Text(
-                      store.settings.userName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-              subtitle: collapsed
-                  ? null
-                  : Text(
-                      store.settings.role.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-              onTap: () => onSelect('Configurações'),
             ),
           ],
         ),
