@@ -1,7 +1,5 @@
-/// Componentes visuais reutilizáveis: vidro, cards, skeleton, chips, etc.
+/// Componentes visuais reutilizáveis: superfícies, cards, skeleton e status.
 library;
-
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -9,12 +7,12 @@ import '../core/theme.dart';
 import '../models/models.dart';
 import 'icon3d.dart';
 
-/// Painel translúcido com blur (glassmorphism).
+/// Superfície sólida para barras e painéis de conteúdo.
 class Glass extends StatelessWidget {
   const Glass({
     super.key,
     required this.child,
-    this.radius = 20,
+    this.radius = 10,
     this.padding,
     this.blur = 18,
     this.opacity,
@@ -29,29 +27,20 @@ class Glass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    final br = BorderRadius.circular(radius);
-    return ClipRRect(
-      borderRadius: br,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            borderRadius: br,
-            color: (ac.dark ? ac.card : Colors.white).withValues(
-              alpha: opacity ?? (ac.dark ? 0.62 : 0.78),
-            ),
-            border: Border.all(color: ac.border.withValues(alpha: 0.8)),
-          ),
-          child: child,
-        ),
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius < 10 ? radius : 10),
+        color: ac.surface,
+        border: Border.all(color: ac.border),
       ),
+      child: child,
     );
   }
 }
 
-/// Card sólido com hover suave.
-class GlassCard extends StatefulWidget {
+/// Card sólido e neutro, sem efeitos de elevação ou vidro.
+class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
@@ -66,56 +55,21 @@ class GlassCard extends StatefulWidget {
   final Color? accent;
 
   @override
-  State<GlassCard> createState() => _GlassCardState();
-}
-
-class _GlassCardState extends State<GlassCard> {
-  bool _hover = false;
-
-  @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    final dur = context.reduceMotion
-        ? Duration.zero
-        : const Duration(milliseconds: 200);
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
-      cursor: widget.onTap != null
-          ? SystemMouseCursors.click
-          : MouseCursor.defer,
-      child: AnimatedContainer(
-        duration: dur,
-        curve: Curves.easeOut,
-        transform: Matrix4.translationValues(
-          0,
-          _hover && widget.onTap != null ? -2 : 0,
-          0,
-        ),
-        decoration: BoxDecoration(
-          color: ac.card,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: _hover
-                ? (widget.accent ?? ac.accent).withValues(alpha: 0.6)
-                : ac.border,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: (_hover ? (widget.accent ?? ac.accent) : Colors.black)
-                  .withValues(alpha: _hover ? 0.18 : (ac.dark ? 0.25 : 0.06)),
-              blurRadius: _hover ? 22 : 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: widget.onTap,
-            child: Padding(padding: widget.padding, child: widget.child),
-          ),
+    const radius = 10.0;
+    return Container(
+      decoration: BoxDecoration(
+        color: ac.card,
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(color: ac.border),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(radius),
+          onTap: onTap,
+          child: Padding(padding: padding, child: child),
         ),
       ),
     );
@@ -166,7 +120,9 @@ class _SkeletonState extends State<Skeleton>
         height: widget.height,
         width: widget.width,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.radius),
+          borderRadius: BorderRadius.circular(
+            widget.radius < 8 ? widget.radius : 8,
+          ),
           color: Color.lerp(
             ac.border.withValues(alpha: 0.45),
             ac.border.withValues(alpha: 0.9),
@@ -216,78 +172,33 @@ Color statusColor(AtlasColors ac, OrderStatus s) => switch (s) {
   OrderStatus.cancelado => ac.danger,
 };
 
-/// Chip de status; "Em Trânsito" ganha um ponto pulsando.
-class StatusChip extends StatefulWidget {
+/// Rótulo compacto de status com cor consistente e sem efeitos animados.
+class StatusChip extends StatelessWidget {
   const StatusChip({super.key, required this.status, this.late = false});
 
   final OrderStatus status;
   final bool late;
 
   @override
-  State<StatusChip> createState() => _StatusChipState();
-}
-
-class _StatusChipState extends State<StatusChip>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  );
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final pulse =
-        widget.status == OrderStatus.emTransito && !context.reduceMotion;
-    if (pulse && !_c.isAnimating) {
-      _c.repeat(reverse: true);
-    } else if (!pulse) {
-      _c.stop();
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant StatusChip old) {
-    super.didUpdateWidget(old);
-    didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    final color = widget.late ? ac.danger : statusColor(ac, widget.status);
-    final label = widget.late ? 'Atrasado' : widget.status.label;
+    final color = late ? ac.danger : statusColor(ac, status);
+    final label = late ? 'Atrasado' : status.label;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AnimatedBuilder(
-            animation: _c,
-            builder: (_, _) => Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.7),
-                    blurRadius: 3 + 6 * _c.value,
-                  ),
-                ],
-              ),
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 6),
@@ -352,7 +263,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// Contador numérico que anima de 0 até o valor.
+/// Contador numérico de KPI.
 class CountUp extends StatelessWidget {
   const CountUp({super.key, required this.value, this.style});
 
@@ -373,7 +284,7 @@ class CountUp extends StatelessWidget {
   }
 }
 
-/// Cartão de KPI com ícone 3D animado.
+/// Cartão de KPI com ícone simples.
 class KpiCard extends StatelessWidget {
   const KpiCard({
     super.key,
@@ -452,7 +363,7 @@ class KpiCard extends StatelessWidget {
   }
 }
 
-/// Moldura padrão de diálogos (vidro, largura limitada, rolável).
+/// Moldura padrão de diálogos com largura limitada e conteúdo rolável.
 class DialogShell extends StatelessWidget {
   const DialogShell({
     super.key,

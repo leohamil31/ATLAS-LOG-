@@ -1,41 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#163b5d"/>
-      <stop offset="1" stop-color="#071d33"/>
-    </linearGradient>
-    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset=".32" stop-color="#e0fbff"/>
-      <stop offset=".7" stop-color="#c7dce8"/>
-      <stop offset="1" stop-color="#7895a8"/>
-    </linearGradient>
-    <linearGradient id="arrow" x1=".15" y1=".1" x2=".85" y2=".9">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset=".5" stop-color="#e4f2f8"/>
-      <stop offset="1" stop-color="#9bb7c9"/>
-    </linearGradient>
-    <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="8"/>
-    </filter>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#background)"/>
-  <path d="M108 438 203 112h117l44 112-68 34-30-60h-31l-75 240z
-           M296 294l68-34 65 178h-83z"
-        fill="#58bce5" opacity=".28" filter="url(#soft-glow)"/>
-  <path d="M108 430 203 104h117l44 112-68 34-30-60h-31l-75 240z
-           M296 286l68-34 65 178h-83z"
-        fill="#16466a" opacity=".72" transform="translate(0 9)"/>
-  <path d="M108 430 203 104h117l44 112-68 34-30-60h-31l-75 240z
-           M296 286l68-34 65 178h-83z"
-        fill="url(#metal)"/>
-  <path d="M82 389c93-2 181-41 258-114l65-76"
-        fill="none" stroke="#123e60" stroke-width="53" stroke-linecap="round" stroke-linejoin="round"
-        transform="translate(0 8)"/>
-  <path d="M82 389c93-2 181-41 258-114l65-76"
-        fill="none" stroke="url(#arrow)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="m371 193 65-27-10 69"
-        fill="#123e60" stroke="#123e60" stroke-width="10" stroke-linejoin="round" transform="translate(0 8)"/>
-  <path d="m371 185 65-27-10 69z"
-        fill="url(#arrow)" stroke="url(#arrow)" stroke-linejoin="round"/>
+  <rect width="512" height="512" fill="#F4F6F8"/>
+  <g transform="scale(5.12)">
+    <path d="M12 90 36 15h19l18 42-16 10-11-24H46L30 90z" fill="#1F2937"/>
+    <path d="M57 67 73 57l18 33H71z" fill="#1F2937"/>
+    <path d="M7 77c24 0 44-9 62-28l13-15-7-4 21-12-4 25-5-5-13 16C54 74 31 84 7 84z"
+          fill="#1D4ED8"/>
+  </g>
 </svg>

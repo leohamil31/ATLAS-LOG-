@@ -1,11 +1,11 @@
-# ATLAS-LOG
+# ATLAS LOG
 
 Dashboard responsivo de demonstração para gestão de pedidos, rastreamento e
 operação logística. O app Flutter funciona na web, Android e iOS.
 
 ## Acessar o app
 
-[Abrir ATLAS-LOG no navegador](https://leohamil31.github.io/ATLAS-LOG-/)
+[Abrir ATLAS LOG no navegador](https://leohamil31.github.io/ATLAS-LOG-/)
 
 ## Funcionalidades
 

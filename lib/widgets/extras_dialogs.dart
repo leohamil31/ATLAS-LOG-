@@ -39,7 +39,11 @@ Uri? whatsappUri(Order o) {
 Future<void> sendWhatsApp(BuildContext context, Order o) async {
   final uri = whatsappUri(o);
   if (uri == null) {
-    toast(context, 'Cadastre um telefone válido para o cliente (edite o pedido).', error: true);
+    toast(
+      context,
+      'Cadastre um telefone válido para o cliente (edite o pedido).',
+      error: true,
+    );
     return;
   }
   try {
@@ -58,7 +62,11 @@ Future<void> sendWhatsApp(BuildContext context, Order o) async {
 
 // ------------------------------------------------------------------------- POD
 
-Future<void> showDeliveryDialog(BuildContext context, AtlasStore store, Order order) {
+Future<void> showDeliveryDialog(
+  BuildContext context,
+  AtlasStore store,
+  Order order,
+) {
   return showDialog<void>(
     context: context,
     builder: (_) => _DeliveryDialog(store: store, order: order),
@@ -106,7 +114,9 @@ class _DeliveryDialogState extends State<_DeliveryDialog> {
       tipo: _signature ? 'assinatura' : 'foto',
       date: widget.store.now,
       arquivo: _file,
-      assinatura: [for (final p in _points) [p.dx, p.dy]],
+      assinatura: [
+        for (final p in _points) [p.dx, p.dy],
+      ],
     );
     final ok = widget.store.deliverOrder(widget.order.id, pod);
     Future<void>.delayed(const Duration(milliseconds: 700), () {
@@ -122,7 +132,11 @@ class _DeliveryDialogState extends State<_DeliveryDialog> {
       title: 'Concluir entrega ${widget.order.id}',
       maxWidth: 520,
       actions: [
-        Button3D(label: 'Voltar', secondary: true, onPressed: () => Navigator.pop(context)),
+        Button3D(
+          label: 'Voltar',
+          secondary: true,
+          onPressed: () => Navigator.pop(context),
+        ),
         Button3D(
           label: 'Confirmar entrega',
           icon: Icons.verified_rounded,
@@ -136,13 +150,24 @@ class _DeliveryDialogState extends State<_DeliveryDialog> {
         children: [
           TextField(
             controller: _name,
-            decoration: const InputDecoration(labelText: 'Quem recebeu', prefixIcon: Icon(Icons.person_rounded)),
+            decoration: const InputDecoration(
+              labelText: 'Quem recebeu',
+              prefixIcon: Icon(Icons.person_rounded),
+            ),
           ),
           const SizedBox(height: 14),
           SegmentedButton<bool>(
             segments: const [
-              ButtonSegment(value: true, icon: Icon(Icons.draw_rounded), label: Text('Assinatura')),
-              ButtonSegment(value: false, icon: Icon(Icons.photo_camera_rounded), label: Text('Foto')),
+              ButtonSegment(
+                value: true,
+                icon: Icon(Icons.draw_rounded),
+                label: Text('Assinatura'),
+              ),
+              ButtonSegment(
+                value: false,
+                icon: Icon(Icons.photo_camera_rounded),
+                label: Text('Foto'),
+              ),
             ],
             selected: {_signature},
             onSelectionChanged: (s) => setState(() {
@@ -163,15 +188,29 @@ class _DeliveryDialogState extends State<_DeliveryDialog> {
                 borderRadius: BorderRadius.circular(14),
                 child: LayoutBuilder(
                   builder: (_, box) => GestureDetector(
-                    onPanStart: (d) => setState(() => _points
-                      ..add(const Offset(-1, -1))
-                      ..add(Offset(d.localPosition.dx / box.maxWidth, d.localPosition.dy / box.maxHeight))),
-                    onPanUpdate: (d) => setState(() => _points.add(
-                      Offset(d.localPosition.dx / box.maxWidth, d.localPosition.dy / box.maxHeight),
-                    )),
+                    onPanStart: (d) => setState(
+                      () => _points
+                        ..add(const Offset(-1, -1))
+                        ..add(
+                          Offset(
+                            d.localPosition.dx / box.maxWidth,
+                            d.localPosition.dy / box.maxHeight,
+                          ),
+                        ),
+                    ),
+                    onPanUpdate: (d) => setState(
+                      () => _points.add(
+                        Offset(
+                          d.localPosition.dx / box.maxWidth,
+                          d.localPosition.dy / box.maxHeight,
+                        ),
+                      ),
+                    ),
                     child: CustomPaint(
                       size: Size.infinite,
-                      painter: SignaturePainter(_points.map((p) => [p.dx, p.dy]).toList()),
+                      painter: SignaturePainter(
+                        _points.map((p) => [p.dx, p.dy]).toList(),
+                      ),
                     ),
                   ),
                 ),
@@ -194,12 +233,18 @@ class _DeliveryDialogState extends State<_DeliveryDialog> {
               ),
               child: Row(
                 children: [
-                  Icon(_file.isEmpty ? Icons.image_outlined : Icons.image_rounded, color: ac.accent, size: 36),
+                  Icon(
+                    _file.isEmpty ? Icons.image_outlined : Icons.image_rounded,
+                    color: ac.accent,
+                    size: 36,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       _file.isEmpty ? 'Nenhuma foto anexada' : _file,
-                      style: TextStyle(color: _file.isEmpty ? ac.muted : ac.text),
+                      style: TextStyle(
+                        color: _file.isEmpty ? ac.muted : ac.text,
+                      ),
                     ),
                   ),
                   Button3D(
@@ -272,7 +317,11 @@ Future<void> showLabelDialog(BuildContext context, AtlasStore store, Order o) {
       title: 'Etiqueta de envio',
       maxWidth: 480,
       actions: [
-        Button3D(label: 'Fechar', secondary: true, onPressed: () => Navigator.pop(ctx)),
+        Button3D(
+          label: 'Fechar',
+          secondary: true,
+          onPressed: () => Navigator.pop(ctx),
+        ),
         Button3D(
           label: 'Imprimir etiqueta',
           icon: Icons.print_rounded,
@@ -294,18 +343,38 @@ Future<void> showLabelDialog(BuildContext context, AtlasStore store, Order o) {
             children: [
               Row(
                 children: [
-                  const Text('ATLAS', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+                  const Text(
+                    'ATLAS',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                  ),
                   const Spacer(),
-                  Text(o.id, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                  Text(
+                    o.id,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ],
               ),
               const Divider(color: Colors.black),
-              const Text('DESTINATÁRIO', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
-              Text(o.cliente, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+              const Text(
+                'DESTINATÁRIO',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+              ),
+              Text(
+                o.cliente,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               Text(o.destino),
               const SizedBox(height: 8),
               Text('Origem: ${o.origem}'),
-              Text('Peso: ${o.pesoKg.toStringAsFixed(0)} kg   Previsão: ${fmtDate(o.previsaoEntrega)}'),
+              Text(
+                'Peso: ${o.pesoKg.toStringAsFixed(0)} kg   Previsão: ${fmtDate(o.previsaoEntrega)}',
+              ),
               if (driver != null) Text('Motorista: ${driver.nome}'),
               const SizedBox(height: 12),
               Center(
@@ -315,7 +384,15 @@ Future<void> showLabelDialog(BuildContext context, AtlasStore store, Order o) {
                   backgroundColor: Colors.white,
                 ),
               ),
-              Center(child: Text(o.id, style: const TextStyle(letterSpacing: 4, fontWeight: FontWeight.w700))),
+              Center(
+                child: Text(
+                  o.id,
+                  style: const TextStyle(
+                    letterSpacing: 4,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -328,7 +405,11 @@ Future<void> printLabel(Order o, String? motorista) async {
   final doc = pw.Document(title: 'Etiqueta ${o.id}');
   doc.addPage(
     pw.Page(
-      pageFormat: const PdfPageFormat(10 * PdfPageFormat.cm, 15 * PdfPageFormat.cm, marginAll: 12),
+      pageFormat: const PdfPageFormat(
+        10 * PdfPageFormat.cm,
+        15 * PdfPageFormat.cm,
+        marginAll: 12,
+      ),
       build: (_) => pw.Container(
         padding: const pw.EdgeInsets.all(10),
         decoration: pw.BoxDecoration(border: pw.Border.all(width: 2)),
@@ -338,17 +419,37 @@ Future<void> printLabel(Order o, String? motorista) async {
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('ATLAS', style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold)),
-                pw.Text(o.id, style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                pw.Text(
+                  'ATLAS',
+                  style: pw.TextStyle(
+                    fontSize: 22,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  o.id,
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             pw.Divider(),
-            pw.Text('DESTINATARIO', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
-            pw.Text(o.cliente, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+            pw.Text(
+              'DESTINATARIO',
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Text(
+              o.cliente,
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            ),
             pw.Text(o.destino),
             pw.SizedBox(height: 6),
             pw.Text('Origem: ${o.origem}'),
-            pw.Text('Peso: ${o.pesoKg.toStringAsFixed(0)} kg  Previsao: ${fmtDate(o.previsaoEntrega)}'),
+            pw.Text(
+              'Peso: ${o.pesoKg.toStringAsFixed(0)} kg  Previsao: ${fmtDate(o.previsaoEntrega)}',
+            ),
             if (motorista != null) pw.Text('Motorista: $motorista'),
             pw.SizedBox(height: 10),
             pw.Center(
@@ -370,13 +471,19 @@ Future<void> printLabel(Order o, String? motorista) async {
       ),
     ),
   );
-  await Printing.layoutPdf(name: 'etiqueta-${o.id}.pdf', onLayout: (_) async => doc.save());
+  await Printing.layoutPdf(
+    name: 'etiqueta-${o.id}.pdf',
+    onLayout: (_) async => doc.save(),
+  );
 }
 
 // ------------------------------------------------------------ Calculadora frete
 
 Future<void> showFreightDialog(BuildContext context) {
-  return showDialog<void>(context: context, builder: (_) => const _FreightDialog());
+  return showDialog<void>(
+    context: context,
+    builder: (_) => const _FreightDialog(),
+  );
 }
 
 class _FreightDialog extends StatefulWidget {
@@ -410,7 +517,10 @@ class _FreightDialogState extends State<_FreightDialog> {
   static String _money(double v) {
     final s = v.toStringAsFixed(2).replaceAll('.', ',');
     final parts = s.split(',');
-    final intPart = parts[0].replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => '.');
+    final intPart = parts[0].replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => '.',
+    );
     return 'R\$ $intPart,${parts[1]}';
   }
 
@@ -427,28 +537,50 @@ class _FreightDialogState extends State<_FreightDialog> {
           initialValue: value,
           isExpanded: true,
           decoration: InputDecoration(labelText: label),
-          items: [for (final c in cities) DropdownMenuItem(value: c, child: Text(c))],
+          items: [
+            for (final c in cities) DropdownMenuItem(value: c, child: Text(c)),
+          ],
           onChanged: on,
         );
 
     return DialogShell(
       title: 'Calculadora de frete e prazo',
       maxWidth: 540,
-      actions: [Button3D(label: 'Fechar', secondary: true, onPressed: () => Navigator.pop(context))],
+      actions: [
+        Button3D(
+          label: 'Fechar',
+          secondary: true,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
       child: Column(
         children: [
           LayoutBuilder(
             builder: (_, box) {
-              final a = cityDrop('Origem (opcional)', _from, (v) => setState(() {
-                _from = v;
-                _autoKm();
-              }));
-              final b = cityDrop('Destino (opcional)', _to, (v) => setState(() {
-                _to = v;
-                _autoKm();
-              }));
+              final a = cityDrop(
+                'Origem (opcional)',
+                _from,
+                (v) => setState(() {
+                  _from = v;
+                  _autoKm();
+                }),
+              );
+              final b = cityDrop(
+                'Destino (opcional)',
+                _to,
+                (v) => setState(() {
+                  _to = v;
+                  _autoKm();
+                }),
+              );
               return box.maxWidth > 420
-                  ? Row(children: [Expanded(child: a), const SizedBox(width: 10), Expanded(child: b)])
+                  ? Row(
+                      children: [
+                        Expanded(child: a),
+                        const SizedBox(width: 10),
+                        Expanded(child: b),
+                      ],
+                    )
                   : Column(children: [a, const SizedBox(height: 10), b]);
             },
           ),
@@ -460,7 +592,10 @@ class _FreightDialogState extends State<_FreightDialog> {
                   controller: _km,
                   keyboardType: TextInputType.number,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(labelText: 'Distância (km)', prefixIcon: Icon(Icons.route_rounded)),
+                  decoration: const InputDecoration(
+                    labelText: 'Distância (km)',
+                    prefixIcon: Icon(Icons.route_rounded),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -469,7 +604,10 @@ class _FreightDialogState extends State<_FreightDialog> {
                   controller: _kg,
                   keyboardType: TextInputType.number,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(labelText: 'Peso (kg)', prefixIcon: Icon(Icons.scale_rounded)),
+                  decoration: const InputDecoration(
+                    labelText: 'Peso (kg)',
+                    prefixIcon: Icon(Icons.scale_rounded),
+                  ),
                 ),
               ),
             ],
@@ -477,7 +615,10 @@ class _FreightDialogState extends State<_FreightDialog> {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Entrega expressa'),
-            subtitle: Text('+40% no valor, prazo reduzido', style: TextStyle(color: ac.muted)),
+            subtitle: Text(
+              '+40% no valor, prazo reduzido',
+              style: TextStyle(color: ac.muted),
+            ),
             value: _express,
             onChanged: (v) => setState(() => _express = v),
           ),
@@ -486,9 +627,9 @@ class _FreightDialogState extends State<_FreightDialog> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(colors: [ac.accent2.withValues(alpha: 0.25), ac.accent.withValues(alpha: 0.15)]),
-              border: Border.all(color: ac.accent.withValues(alpha: 0.4)),
+              color: ac.bg,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: ac.border),
             ),
             child: Row(
               children: [
@@ -497,7 +638,13 @@ class _FreightDialogState extends State<_FreightDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Frete estimado', style: TextStyle(color: ac.muted)),
-                      Text(_money(q.cost), style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
+                      Text(
+                        _money(q.cost),
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -505,7 +652,13 @@ class _FreightDialogState extends State<_FreightDialog> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text('Prazo', style: TextStyle(color: ac.muted)),
-                    Text('${q.days} dia${q.days == 1 ? '' : 's'}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                    Text(
+                      '${q.days} dia${q.days == 1 ? '' : 's'}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ],
                 ),
               ],

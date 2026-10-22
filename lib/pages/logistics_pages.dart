@@ -117,7 +117,7 @@ class _LogisticsShellState extends State<LogisticsShell> {
                   appBar: AppBar(
                     titleSpacing: 0,
                     title: Text(
-                      _page == 'Dashboard' ? 'ATLAS-LOG' : _page,
+                      _page == 'Dashboard' ? 'ATLAS LOG' : _page,
                       overflow: TextOverflow.ellipsis,
                     ),
                     leading: Builder(
@@ -152,6 +152,10 @@ class _LogisticsShellState extends State<LogisticsShell> {
                   body: body,
                   bottomNavigationBar: NavigationBar(
                     selectedIndex: _bottomIndex(mobilePages),
+                    backgroundColor: context.ac.surface,
+                    surfaceTintColor: Colors.transparent,
+                    indicatorColor: Colors.transparent,
+                    elevation: 0,
                     labelBehavior:
                         NavigationDestinationLabelBehavior.onlyShowSelected,
                     onDestinationSelected: (index) =>
@@ -159,7 +163,11 @@ class _LogisticsShellState extends State<LogisticsShell> {
                     destinations: [
                       for (final page in mobilePages)
                         NavigationDestination(
-                          icon: Icon(_iconFor(page)),
+                          icon: Icon(_iconFor(page), color: context.ac.muted),
+                          selectedIcon: Icon(
+                            _iconFor(page),
+                            color: context.ac.accent2,
+                          ),
                           label: page,
                         ),
                     ],
@@ -272,26 +280,30 @@ class _Sidebar extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       width: width,
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: .82),
+        color: colors.surface,
         border: Border(right: BorderSide(color: colors.border)),
       ),
       child: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(collapsed ? 16 : 22),
-              child: Row(
-                children: [
-                  AtlasLogo3D(
-                    size: collapsed ? 42 : 44,
-                    showWordmark: !collapsed,
-                  ),
-                ],
+              padding: EdgeInsets.fromLTRB(
+                collapsed ? 15 : 20,
+                20,
+                collapsed ? 15 : 12,
+                18,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: AtlasLogo3D(
+                  size: collapsed ? 38 : 36,
+                  showWordmark: !collapsed,
+                ),
               ),
             ),
             if (!collapsed)
               Padding(
-                padding: const EdgeInsets.fromLTRB(22, 4, 18, 12),
+                padding: const EdgeInsets.fromLTRB(20, 4, 14, 12),
                 child: Row(
                   children: [
                     Expanded(
@@ -316,41 +328,43 @@ class _Sidebar extends StatelessWidget {
               ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 children: [
                   for (final item in visibleItems)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.only(bottom: 2),
                       child: Tooltip(
                         message: collapsed ? item.$1 : '',
                         child: Material(
                           type: MaterialType.transparency,
                           child: ListTile(
                             selected: selected == item.$1,
-                            selectedTileColor: colors.accent.withValues(
-                              alpha: .14,
+                            selectedTileColor: Colors.transparent,
+                            minTileHeight: 46,
+                            horizontalTitleGap: 12,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: collapsed ? 14 : 10,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(13),
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                            leading: Icon3D(
-                              icon: item.$2,
+                            leading: Icon(
+                              item.$2,
+                              size: 21,
                               color: selected == item.$1
                                   ? colors.accent2
                                   : colors.muted,
-                              size: 36,
-                              animate: selected == item.$1,
-                              motion: item.$1 == 'Configurações'
-                                  ? IconMotion.spin
-                                  : IconMotion.tilt,
                             ),
                             title: collapsed
                                 ? null
                                 : Text(
                                     item.$1,
                                     style: TextStyle(
+                                      color: selected == item.$1
+                                          ? colors.accent2
+                                          : colors.text,
                                       fontWeight: selected == item.$1
-                                          ? FontWeight.w800
+                                          ? FontWeight.w700
                                           : FontWeight.w500,
                                     ),
                                   ),
@@ -418,10 +432,10 @@ class _NavCount extends StatelessWidget {
     final colors = context.ac;
     if (count == 0) return const SizedBox.shrink();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: colors.accent.withValues(alpha: .14),
-        borderRadius: BorderRadius.circular(30),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         '$count',
@@ -453,83 +467,109 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.ac;
-    return Glass(
-      radius: 0,
-      blur: 18,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final compact = constraints.maxWidth < 900;
-          return Row(
-            children: [
-              AtlasLogo3D(size: compact ? 36 : 40),
-              SizedBox(width: compact ? 10 : 14),
-              Expanded(
-                child: Text(
-                  title == 'Dashboard' ? 'Visão geral da operação' : title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              if (compact) ...[
-                IconButton(
-                  tooltip: 'Buscar pedidos e telas',
-                  onPressed: onSearch,
-                  icon: const Icon(Icons.search_rounded),
-                ),
-                IconButton(
-                  tooltip: 'Assistente de logística',
-                  onPressed: onAssistant,
-                  icon: const Icon(Icons.auto_awesome_rounded),
-                ),
-                notification,
-                Tooltip(
-                  message: userName,
-                  child: CircleAvatar(
-                    radius: 17,
-                    backgroundColor: colors.accent2,
-                    foregroundColor: Colors.white,
-                    child: Text(
-                      userName.isEmpty ? 'A' : userName[0].toUpperCase(),
+    return Container(
+      height: 68,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(bottom: BorderSide(color: colors.border)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 210,
+            child: Text(
+              title == 'Dashboard' ? 'Visão geral' : title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
+                child: Material(
+                  color: colors.bg,
+                  borderRadius: BorderRadius.circular(7),
+                  child: InkWell(
+                    onTap: onSearch,
+                    borderRadius: BorderRadius.circular(7),
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: colors.border),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search_rounded,
+                            size: 19,
+                            color: colors.muted,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Buscar pedidos, telas e clientes',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: colors.muted,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Ctrl K',
+                            style: TextStyle(
+                              color: colors.muted,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ] else ...[
-                OutlinedButton.icon(
-                  onPressed: onSearch,
-                  icon: const Icon(Icons.search_rounded, size: 17),
-                  label: const Text('Buscar pedidos e telas'),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Assistente de logística',
+            onPressed: onAssistant,
+            icon: const Icon(Icons.auto_awesome_outlined),
+          ),
+          notification,
+          const SizedBox(width: 8),
+          Tooltip(
+            message: userName,
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: colors.accent2,
+              foregroundColor: Colors.white,
+              child: Text(
+                userName.isEmpty ? 'A' : userName[0].toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(width: 8),
-                OutlinedButton.icon(
-                  onPressed: onAssistant,
-                  icon: const Icon(Icons.auto_awesome_rounded, size: 17),
-                  label: const Text('Assistente'),
-                ),
-                const SizedBox(width: 5),
-                notification,
-                const SizedBox(width: 8),
-                CircleAvatar(
-                  radius: 17,
-                  backgroundColor: colors.accent2,
-                  foregroundColor: Colors.white,
-                  child: Text(
-                    userName.isEmpty ? 'A' : userName[0].toUpperCase(),
-                  ),
-                ),
-                const SizedBox(width: 9),
-                Text(
-                  userName,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ],
-            ],
-          );
-        },
+              ),
+            ),
+          ),
+          const SizedBox(width: 9),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 130),
+            child: Text(
+              userName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1696,7 +1736,7 @@ class _FleetMap extends StatelessWidget {
         ? const LatLng(-15.78, -47.93)
         : orderPosition(positioned.first)!;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10),
       child: SizedBox(
         height: MediaQuery.sizeOf(context).width < 600 ? 250 : 340,
         child: Stack(
@@ -1838,19 +1878,12 @@ class _DriverCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                decoration: BoxDecoration(
-                  color: driverColor.withValues(alpha: .14),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(
-                  driver.status.label,
-                  style: TextStyle(
-                    color: driverColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                  ),
+              Text(
+                driver.status.label,
+                style: TextStyle(
+                  color: driverColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
@@ -2002,7 +2035,7 @@ class _PublicTrackingPageState extends State<PublicTrackingPage> {
     final colors = context.ac;
     final order = _order;
     return Scaffold(
-      appBar: AppBar(title: const Text('Rastreamento ATLAS-LOG')),
+      appBar: AppBar(title: const Text('Rastreamento ATLAS LOG')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
