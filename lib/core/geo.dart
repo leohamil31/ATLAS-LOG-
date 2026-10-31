@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: coordenadas das cidades e otimização de rota.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Utilitários de geografia e logística: coordenadas das cidades, distâncias,
 /// cálculo de frete/prazo e otimização da sequência de paradas.
 library;

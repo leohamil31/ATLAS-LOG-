@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: geração de PDF.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Geração do relatório em PDF (abre diálogo de impressão / salvar PDF).
 library;
 

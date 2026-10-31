@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: modelos de domínio (Order, Driver, Settings...).
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Modelos de dados do Atlas. Todos são serializáveis em JSON para que o
 /// estado inteiro possa ser persistido localmente e exportado como backup.
 library;

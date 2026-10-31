@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: formatação de datas/números.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Helpers de formatação (datas, tempo relativo, CSV) sem depender de intl.
 library;
 

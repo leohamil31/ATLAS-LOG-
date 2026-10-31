@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: estado/persistência do app (AtlasStore, ChangeNotifier).
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Camada de serviço do Atlas: guarda todo o estado em memória, aplica as
 /// regras operacionais e persiste tudo em `SharedPreferences` (localStorage
 /// na web), de modo que qualquer ação sobrevive a recarregar a página.

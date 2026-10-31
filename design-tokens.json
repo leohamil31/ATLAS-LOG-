@@ -1,0 +1,85 @@
+{
+  "$description": "ATLAS LOG design tokens — fonte da verdade: lib/core/theme.dart (AtlasColors, AtlasRadius, AtlasMotion, AtlasBreakpoints, AtlasLight). Cores com 8 dígitos = #RRGGBBAA.",
+  "color": {
+    "light": {
+      "bg": "#F3F5FB",
+      "surface": "#FFFFFF",
+      "card": "#FFFFFF",
+      "border": "#E3E7F1",
+      "text": "#151A2D",
+      "muted": "#5E6683",
+      "accent": "#4F46E5",
+      "accent2": "#4F46E5",
+      "accent3": "#7C3AED",
+      "success": "#0F8A5F",
+      "warning": "#B45309",
+      "danger": "#C0262D",
+      "glass": "#FFFFFFC7",
+      "shadow": "#283373"
+    },
+    "dark": {
+      "bg": "#080B18",
+      "surface": "#111631",
+      "card": "#141A38",
+      "border": "#252D55",
+      "text": "#F1F3FF",
+      "muted": "#9AA3C7",
+      "accent": "#8B93FF",
+      "accent2": "#6366F1",
+      "accent3": "#9F55F5",
+      "success": "#34D399",
+      "warning": "#FBBF24",
+      "danger": "#F87171",
+      "glass": "#141A38A6",
+      "shadow": "#000000"
+    }
+  },
+  "gradient": {
+    "brand": "linear-gradient(135deg, accent2, accent3)",
+    "sheen": "linear-gradient(180deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 55%)"
+  },
+  "radius": {
+    "xs": 6.0,
+    "sm": 10.0,
+    "md": 14.0,
+    "lg": 18.0,
+    "xl": 24.0,
+    "pill": 999.0
+  },
+  "motion": {
+    "duration_ms": {
+      "instant": 90,
+      "fast": 150,
+      "base": 240,
+      "slow": 380,
+      "entrance": 460
+    },
+    "easing": {
+      "enter": "cubic-bezier(0.05, 0.7, 0.1, 1)",
+      "exit": "cubic-bezier(0.3, 0, 0.8, 0.15)",
+      "standard": "cubic-bezier(0.2, 0, 0, 1)",
+      "pop": "easeOutBack"
+    }
+  },
+  "breakpoints": {
+    "phone": 600.0,
+    "tablet": 940.0,
+    "desktop": 1100.0,
+    "contentMax": 1480.0
+  },
+  "light": {
+    "direction": "top-left",
+    "edge": "base darkened 38%",
+    "volume": "base +16% white → base → base −22% black (135deg)"
+  },
+  "typography": {
+    "family": "Inter (google_fonts)",
+    "headings": {
+      "weight": 800,
+      "letterSpacing": "-0.3 a -0.7"
+    },
+    "body": {
+      "weight": 400
+    }
+  }
+}

@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: exportação CSV/JSON.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Exportação de arquivos (CSV, JSON, PDF) com download real na web e
 /// compartilhamento nativo no celular.
 library;

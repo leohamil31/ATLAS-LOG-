@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: stub de exportação (não-web).
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 import 'dart:typed_data';
 
 import 'package:share_plus/share_plus.dart';

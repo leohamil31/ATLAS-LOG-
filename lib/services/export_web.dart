@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: download no navegador.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 import 'dart:js_interop';
 import 'dart:typed_data';
 

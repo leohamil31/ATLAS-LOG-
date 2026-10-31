@@ -1,3 +1,6 @@
+// DATA-BOUNDARY: dados de exemplo.
+// Não faz parte da camada visual — redesenhar NÃO exige mexer aqui.
+
 /// Dados de exemplo gerados em relação à data atual, para o painel sempre
 /// parecer "vivo" (entregas recentes, pedidos em rota e alguns atrasos).
 library;
