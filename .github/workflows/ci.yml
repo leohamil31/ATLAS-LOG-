@@ -1,0 +1,47 @@
+name: CI (branches)
+
+# Valida branches de trabalho antes do merge: analyze + testes + build web.
+# Não publica nada — a publicação no GitHub Pages continua só no main
+# (pages.yml).
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Format check (informativo)
+        run: dart format --output=none --set-exit-if-changed lib test || echo "::warning::Rode 'dart format lib test' para padronizar a formatação."
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build web
+        run: flutter build web --release
