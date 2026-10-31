@@ -1,3 +1,9 @@
+// Telas de gestão: Relatórios, Notificações, Configurações e Assistente.
+// Mapa de design:
+//   DESIGN-SLOT[finance]  _FinanceCard (Relatórios)
+//   MOTION-HOOK[list]     Notificações com AnimatedItems (marcar lida / limpar)
+//   MOTION-HOOK[chat]     Assistente: bolhas entram deslizando (FadeSlideIn)
+
 import 'package:flutter/material.dart';
 
 import '../core/format.dart';
@@ -97,7 +103,7 @@ class _ReportsPageState extends State<ReportsPage> {
       padding: EdgeInsets.all(
         MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
       ),
-      children: [
+      children: staggered([
         SectionHeader(
           title: 'Relatórios e indicadores',
           subtitle:
@@ -216,7 +222,7 @@ class _ReportsPageState extends State<ReportsPage> {
             ],
           ),
         ),
-      ],
+      ]),
     );
   }
 
@@ -305,7 +311,7 @@ class NotificationsPage extends StatelessWidget {
       padding: EdgeInsets.all(
         MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
       ),
-      children: [
+      children: staggered([
         SectionHeader(
           title: 'Central de notificações',
           subtitle: '${store.unreadCount} não lida(s)',
@@ -330,12 +336,14 @@ class NotificationsPage extends StatelessWidget {
           const EmptyState(
             title: 'Sem notificações',
             message: 'Novos eventos operacionais serão exibidos aqui.',
-          )
-        else
-          for (final notification in store.notifications)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 9),
-              child: GlassCard(
+          ),
+        // Marcar como lida atualiza no lugar; "Limpar" faz os cards saírem
+        // deslizando antes de o estado vazio aparecer.
+        AnimatedItems<AppNotification>(
+          items: store.notifications,
+          keyOf: (n) => n.id,
+          spacing: 9,
+          itemBuilder: (context, notification, _) => GlassCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 8,
@@ -375,8 +383,8 @@ class NotificationsPage extends StatelessWidget {
                       : () => store.markRead(notification.id),
                 ),
               ),
-            ),
-      ],
+        ),
+      ]),
     );
   }
 }
@@ -393,7 +401,7 @@ class SettingsPage extends StatelessWidget {
       padding: EdgeInsets.all(
         MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
       ),
-      children: [
+      children: staggered([
         const SectionHeader(
           title: 'Configurações',
           subtitle: 'Preferências, perfil de demonstração e dados locais',
@@ -590,7 +598,7 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
         ),
-      ],
+      ]),
     );
   }
 }
@@ -702,10 +710,13 @@ class _AssistantDialogState extends State<AssistantDialog> {
     final colors = context.ac;
     return Dialog(
       backgroundColor: Colors.transparent,
+      elevation: 0,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640, maxHeight: 720),
         child: Glass(
-          opacity: .96,
+          opacity: colors.dark ? .9 : .95,
+          radius: AtlasRadius.xl,
+          blur: 24,
           child: Column(
             children: [
               Padding(
@@ -737,22 +748,55 @@ class _AssistantDialogState extends State<AssistantDialog> {
                     vertical: 8,
                   ),
                   children: [
-                    for (final message in _messages)
-                      Align(
-                        alignment: message.$1
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 480),
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.all(11),
-                          decoration: BoxDecoration(
-                            color: message.$1
-                                ? colors.accent2.withValues(alpha: .2)
-                                : colors.surface,
-                            borderRadius: BorderRadius.circular(14),
+                    for (final (i, message) in _messages.indexed)
+                      FadeSlideIn(
+                        key: ValueKey('msg-$i'),
+                        offset: Offset(message.$1 ? 16 : -16, 6),
+                        scale: 0.96,
+                        child: Align(
+                          alignment: message.$1
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 480),
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 13,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: message.$1
+                                  ? colors.brandGradient
+                                  : null,
+                              color: message.$1 ? null : colors.surface,
+                              border: message.$1
+                                  ? null
+                                  : Border.all(color: colors.border),
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(16),
+                                topRight: const Radius.circular(16),
+                                bottomLeft: Radius.circular(
+                                  message.$1 ? 16 : 4,
+                                ),
+                                bottomRight: Radius.circular(
+                                  message.$1 ? 4 : 16,
+                                ),
+                              ),
+                              boxShadow: message.$1
+                                  ? AtlasShadows.glow(
+                                      colors.accent2,
+                                      strength: 0.5,
+                                    )
+                                  : null,
+                            ),
+                            child: Text(
+                              message.$2,
+                              style: TextStyle(
+                                color: message.$1 ? Colors.white : null,
+                                height: 1.4,
+                              ),
+                            ),
                           ),
-                          child: Text(message.$2),
                         ),
                       ),
                     for (final order in _orders)

@@ -1,3 +1,6 @@
+// Diálogos extras: entrega/POD, etiqueta QR, frete, WhatsApp.
+// MOTION-HOOK[dialog]: abertos com showAtlasDialog (widgets/motion.dart).
+
 /// Diálogos extras: comprovante de entrega (POD), etiqueta, calculadora de
 /// frete e mensagem de WhatsApp.
 library;
@@ -67,7 +70,7 @@ Future<void> showDeliveryDialog(
   AtlasStore store,
   Order order,
 ) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) => _DeliveryDialog(store: store, order: order),
   );
@@ -311,7 +314,7 @@ class SignaturePainter extends CustomPainter {
 Future<void> showLabelDialog(BuildContext context, AtlasStore store, Order o) {
   final ac = context.ac;
   final driver = store.driverById(o.motoristaId);
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (ctx) => DialogShell(
       title: 'Etiqueta de envio',
@@ -480,7 +483,7 @@ Future<void> printLabel(Order o, String? motorista) async {
 // ------------------------------------------------------------ Calculadora frete
 
 Future<void> showFreightDialog(BuildContext context) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) => const _FreightDialog(),
   );

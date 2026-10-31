@@ -1,3 +1,6 @@
+// Diálogos de pedido/motorista (formulários). Visual: DialogShell + Button3D.
+// MOTION-HOOK[dialog]: abertos com showAtlasDialog (widgets/motion.dart).
+
 /// Diálogos de pedidos: formulário, detalhes com timeline 3D, vincular carga
 /// e confirmação de exclusão.
 library;
@@ -20,7 +23,7 @@ Future<bool> confirmDialog(
   String confirmLabel = 'Excluir',
 }) async {
   final ac = context.ac;
-  final result = await showDialog<bool>(
+  final result = await showAtlasDialog<bool>(
     context: context,
     builder: (ctx) => DialogShell(
       title: title,
@@ -51,7 +54,7 @@ Future<void> showOrderForm(
   AtlasStore store, {
   Order? order,
 }) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) => _OrderForm(store: store, order: order),
   );
@@ -250,7 +253,7 @@ Future<void> showOrderDetails(
   AtlasStore store,
   String orderId,
 ) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) => ListenableBuilder(
       listenable: store,
@@ -565,7 +568,7 @@ Future<void> showAssignDialog(
   String? orderId,
   String? driverId,
 }) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) =>
         _AssignDialog(store: store, orderId: orderId, driverId: driverId),
@@ -707,7 +710,7 @@ Future<void> showDriverForm(
   AtlasStore store, {
   Driver? driver,
 }) {
-  return showDialog<void>(
+  return showAtlasDialog<void>(
     context: context,
     builder: (_) => _DriverForm(store: store, driver: driver),
   );
