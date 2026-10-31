@@ -1,46 +1,111 @@
-/// Componentes visuais reutilizáveis: superfícies, cards, skeleton e status.
+/// Componentes visuais reutilizáveis: vidro, cards, skeleton, status, toasts.
+///
+/// As APIs públicas são as mesmas da versão anterior — só o visual e o
+/// movimento mudaram — então as páginas não precisam ser reescritas.
 library;
+
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
 import '../models/models.dart';
+import 'depth.dart';
 import 'icon3d.dart';
+import 'motion.dart';
 
-/// Superfície sólida para barras e painéis de conteúdo.
+export 'depth.dart';
+export 'motion.dart';
+
+/// Superfície de vidro: blur real do que está atrás + preenchimento
+/// translúcido + borda com brilho. Use para barras, painéis e diálogos.
 class Glass extends StatelessWidget {
   const Glass({
     super.key,
     required this.child,
-    this.radius = 10,
+    this.radius = AtlasRadius.lg,
     this.padding,
     this.blur = 18,
     this.opacity,
+    this.highlight = false,
+    this.shadow = true,
   });
 
   final Widget child;
   final double radius;
   final EdgeInsetsGeometry? padding;
+
+  /// Sigma do desfoque. 0 desliga o BackdropFilter (mais barato).
   final double blur;
+
+  /// Opacidade do preenchimento (padrão: [AtlasColors.glass]).
   final double? opacity;
+
+  /// Adiciona uma lavagem de gradiente de marca (hero, banners).
+  final bool highlight;
+  final bool shadow;
 
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    return Container(
-      padding: padding,
+    final shape = BorderRadius.circular(radius);
+    final fill = opacity == null
+        ? ac.glass
+        : ac.surface.withValues(alpha: opacity!);
+
+    Widget surface = DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius < 10 ? radius : 10),
-        color: ac.surface,
-        border: Border.all(color: ac.border),
+        borderRadius: shape,
+        color: fill,
+        gradient: highlight
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  ac.accent2.withValues(alpha: ac.dark ? 0.22 : 0.10),
+                  fill,
+                  ac.accent3.withValues(alpha: ac.dark ? 0.16 : 0.07),
+                ],
+                stops: const [0, 0.55, 1],
+              )
+            : null,
+        border: Border.all(
+          color: ac.dark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.white.withValues(alpha: 0.85),
+        ),
       ),
-      child: child,
+      child: DecoratedBox(
+        // Hairline externa para separar do fundo no tema claro.
+        decoration: BoxDecoration(
+          borderRadius: shape,
+          border: Border.all(color: ac.border.withValues(alpha: 0.65)),
+        ),
+        child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
+      ),
+    );
+
+    if (blur > 0) {
+      surface = BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: surface,
+      );
+    }
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: shape,
+        boxShadow: shadow ? AtlasShadows.soft(ac) : null,
+      ),
+      child: ClipRRect(borderRadius: shape, child: surface),
     );
   }
 }
 
-/// Card sólido e neutro, sem efeitos de elevação ou vidro.
-class GlassCard extends StatelessWidget {
+/// Card de conteúdo com profundidade e micro-interações:
+/// hover → borda tingida + sombra elevada (+ leve subida se clicável);
+/// press → escala 0,985.
+class GlassCard extends StatefulWidget {
   const GlassCard({
     super.key,
     required this.child,
@@ -55,28 +120,56 @@ class GlassCard extends StatelessWidget {
   final Color? accent;
 
   @override
+  State<GlassCard> createState() => _GlassCardState();
+}
+
+class _GlassCardState extends State<GlassCard> {
+  bool _hover = false;
+
+  @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    const radius = 10.0;
-    return Container(
+    final interactive = widget.onTap != null;
+    final accent = widget.accent ?? ac.accent2;
+    final lift = _hover && interactive && !context.reduceMotion;
+    final shape = BorderRadius.circular(AtlasRadius.md);
+
+    Widget card = AnimatedContainer(
+      duration: AtlasMotion.of(context, AtlasMotion.base),
+      curve: AtlasMotion.standard,
+      transform: Matrix4.translationValues(0, lift ? -3 : 0, 0),
       decoration: BoxDecoration(
-        color: ac.card,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: ac.border),
+        color: ac.card.withValues(alpha: ac.dark ? 0.88 : 0.94),
+        borderRadius: shape,
+        border: Border.all(
+          color: _hover ? accent.withValues(alpha: 0.38) : ac.border,
+        ),
+        boxShadow: _hover ? AtlasShadows.raised(ac) : AtlasShadows.soft(ac),
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(radius),
-          onTap: onTap,
-          child: Padding(padding: padding, child: child),
+          borderRadius: shape,
+          onTap: widget.onTap,
+          hoverColor: Colors.transparent,
+          splashColor: accent.withValues(alpha: 0.10),
+          highlightColor: accent.withValues(alpha: 0.05),
+          child: Padding(padding: widget.padding, child: widget.child),
         ),
       ),
+    );
+
+    if (interactive) card = PressScale(pressedScale: 0.985, child: card);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: card,
     );
   }
 }
 
-/// Bloco cinza pulsante para estados de carregamento.
+/// Bloco de carregamento com brilho deslizante (shimmer).
 class Skeleton extends StatefulWidget {
   const Skeleton({super.key, this.height = 16, this.width, this.radius = 10});
 
@@ -92,7 +185,7 @@ class _SkeletonState extends State<Skeleton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1100),
+    duration: const Duration(milliseconds: 1400),
   );
 
   @override
@@ -101,7 +194,7 @@ class _SkeletonState extends State<Skeleton>
     if (context.reduceMotion) {
       _c.stop();
     } else if (!_c.isAnimating) {
-      _c.repeat(reverse: true);
+      _c.repeat();
     }
   }
 
@@ -114,53 +207,73 @@ class _SkeletonState extends State<Skeleton>
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
+    final base = ac.border.withValues(alpha: ac.dark ? 0.55 : 0.6);
+    final shine = ac.dark
+        ? Colors.white.withValues(alpha: 0.10)
+        : Colors.white.withValues(alpha: 0.9);
     return AnimatedBuilder(
       animation: _c,
-      builder: (_, _) => Container(
-        height: widget.height,
-        width: widget.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            widget.radius < 8 ? widget.radius : 8,
+      builder: (_, _) {
+        final x = -1.6 + 3.2 * _c.value;
+        return Container(
+          height: widget.height,
+          width: widget.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.radius.clamp(4, 16)),
+            gradient: LinearGradient(
+              begin: Alignment(x - 0.6, -0.2),
+              end: Alignment(x + 0.6, 0.2),
+              colors: [base, Color.alphaBlend(shine, base), base],
+              stops: const [0.1, 0.5, 0.9],
+            ),
           ),
-          color: Color.lerp(
-            ac.border.withValues(alpha: 0.45),
-            ac.border.withValues(alpha: 0.9),
-            _c.value,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-/// Esqueleto de página inteira (cards + lista).
+/// Esqueleto de página inteira (hero + KPIs + gráfico + lista), responsivo.
 class PageSkeleton extends StatelessWidget {
   const PageSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Skeleton(height: 28, width: 220),
-          const SizedBox(height: 20),
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final kpis = w > 1050
+            ? 4
+            : w > 600
+            ? 2
+            : 1;
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.all(w < 600 ? 16 : 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (var i = 0; i < 4; i++) ...[
-                if (i > 0) const SizedBox(width: 14),
-                const Expanded(child: Skeleton(height: 110, radius: 20)),
+              const Skeleton(height: 112, radius: 18),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  for (var i = 0; i < kpis; i++) ...[
+                    if (i > 0) const SizedBox(width: 14),
+                    const Expanded(child: Skeleton(height: 104, radius: 14)),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Skeleton(height: 240, radius: 14),
+              const SizedBox(height: 14),
+              for (var i = 0; i < 3; i++) ...[
+                const Skeleton(height: 64, radius: 14),
+                const SizedBox(height: 10),
               ],
             ],
           ),
-          const SizedBox(height: 20),
-          const Skeleton(height: 240, radius: 20),
-          const SizedBox(height: 14),
-          const Skeleton(height: 60, radius: 16),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -172,7 +285,7 @@ Color statusColor(AtlasColors ac, OrderStatus s) => switch (s) {
   OrderStatus.cancelado => ac.danger,
 };
 
-/// Rótulo compacto de status com cor consistente e sem efeitos animados.
+/// Pílula de status. Ao mudar de status (CRUD) faz crossfade + pop.
 class StatusChip extends StatelessWidget {
   const StatusChip({super.key, required this.status, this.late = false});
 
@@ -184,38 +297,61 @@ class StatusChip extends StatelessWidget {
     final ac = context.ac;
     final color = late ? ac.danger : statusColor(ac, status);
     final label = late ? 'Atrasado' : status.label;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(5),
+    final live = status == OrderStatus.emTransito && !late;
+    return AnimatedSwitcher(
+      duration: AtlasMotion.of(context, AtlasMotion.base),
+      switchInCurve: AtlasMotion.pop,
+      transitionBuilder: (child, anim) => FadeTransition(
+        opacity: anim,
+        child: ScaleTransition(
+          scale: Tween(begin: 0.85, end: 1.0).animate(anim),
+          child: child,
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 7,
-            height: 7,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
+      child: Container(
+        key: ValueKey('$status-$late'),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: ac.dark ? 0.16 : 0.10),
+          borderRadius: BorderRadius.circular(AtlasRadius.pill),
+          border: Border.all(color: color.withValues(alpha: 0.22)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                boxShadow: live
+                    ? [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.6),
+                          blurRadius: 6,
+                        ),
+                      ]
+                    : null,
+              ),
             ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
+/// Estado vazio com ícone em halo e entrada suave.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
@@ -231,39 +367,66 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon3D(
-              icon: Icons.inventory_2_rounded,
-              color: ac.accent2,
-              motion: IconMotion.bounce,
-              size: 56,
-              loop: true,
+    return FadeSlideIn(
+      scale: 0.96,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 104,
+                  height: 104,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        ac.accent2.withValues(alpha: 0.18),
+                        ac.accent2.withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon3D(
+                      icon: Icons.inventory_2_rounded,
+                      color: ac.accent2,
+                      motion: IconMotion.bounce,
+                      size: 60,
+                      animate: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: ac.muted, height: 1.45),
+                ),
+                if (action != null) ...[const SizedBox(height: 20), action!],
+              ],
             ),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: ac.muted),
-            ),
-            if (action != null) ...[const SizedBox(height: 16), action!],
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Contador numérico de KPI.
+/// Contador numérico de KPI. Anima do valor anterior ao novo (não de 0)
+/// quando o dado muda depois de uma ação de CRUD.
 class CountUp extends StatelessWidget {
   const CountUp({super.key, required this.value, this.style});
 
@@ -272,19 +435,21 @@ class CountUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dur = context.reduceMotion
-        ? Duration.zero
-        : const Duration(milliseconds: 700);
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: value.toDouble()),
-      duration: dur,
+      duration: AtlasMotion.of(context, const Duration(milliseconds: 900)),
       curve: Curves.easeOutCubic,
-      builder: (_, v, _) => Text('${v.round()}', style: style),
+      builder: (_, v, _) => Text(
+        '${v.round()}',
+        style: (style ?? const TextStyle()).copyWith(
+          fontFeatures: const [ui.FontFeature.tabularFigures()],
+        ),
+      ),
     );
   }
 }
 
-/// Cartão de KPI com ícone simples.
+/// Cartão de KPI com ícone em ladrilho colorido e contador animado.
 class KpiCard extends StatelessWidget {
   const KpiCard({
     super.key,
@@ -310,7 +475,12 @@ class KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    return GlassCard(
+    // KPIs clicáveis inclinam na direção do ponteiro (profundidade = "dá
+    // para clicar"); KPIs informativos ficam planos.
+    return Tilt3D(
+      enabled: onTap != null,
+      maxTilt: 0.12,
+      child: GlassCard(
       onTap: onTap,
       accent: color,
       child: Row(
@@ -325,17 +495,19 @@ class KpiCard extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CountUp(
                   value: value,
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.w800,
-                    height: 1.1,
+                    letterSpacing: -0.8,
+                    height: 1.05,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Text(
                   label,
                   overflow: TextOverflow.ellipsis,
@@ -357,13 +529,21 @@ class KpiCard extends StatelessWidget {
               ],
             ),
           ),
+          if (onTap != null)
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 13,
+              color: ac.muted.withValues(alpha: 0.6),
+            ),
         ],
+      ),
       ),
     );
   }
 }
 
-/// Moldura padrão de diálogos com largura limitada e conteúdo rolável.
+/// Moldura padrão de diálogos: vidro, cabeçalho fixo, corpo rolável e
+/// barra de ações. A animação de entrada/saída vem de [showAtlasDialog].
 class DialogShell extends StatelessWidget {
   const DialogShell({
     super.key,
@@ -381,59 +561,80 @@ class DialogShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
+    final phone = MediaQuery.sizeOf(context).width < AtlasBreakpoints.phone;
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(16),
+      elevation: 0,
+      insetPadding: EdgeInsets.all(phone ? 12 : 24),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: maxWidth,
           maxHeight: MediaQuery.sizeOf(context).height * 0.9,
         ),
-        child: Glass(
-          opacity: ac.dark ? 0.92 : 0.96,
-          radius: 24,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(22, 18, 10, 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w800,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AtlasRadius.xl),
+            boxShadow: AtlasShadows.raised(ac),
+          ),
+          child: Glass(
+            opacity: ac.dark ? 0.9 : 0.94,
+            radius: AtlasRadius.xl,
+            blur: 24,
+            shadow: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 16, 10, 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          gradient: ac.brandGradient,
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      tooltip: 'Fechar',
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      icon: Icon(Icons.close_rounded, color: ac.muted),
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(22, 6, 22, 14),
-                  child: child,
-                ),
-              ),
-              if (actions.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 18),
-                  child: Wrap(
-                    alignment: WrapAlignment.end,
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: actions,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Fechar',
+                        onPressed: () => Navigator.of(context).maybePop(),
+                        icon: Icon(Icons.close_rounded, color: ac.muted),
+                      ),
+                    ],
                   ),
                 ),
-            ],
+                Divider(height: 1, color: ac.border.withValues(alpha: 0.7)),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(22, 16, 22, 14),
+                    child: child,
+                  ),
+                ),
+                if (actions.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 4, 22, 18),
+                    child: Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: actions,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -441,19 +642,41 @@ class DialogShell extends StatelessWidget {
   }
 }
 
+/// Toast flutuante (snackbar) com ícone que "salta" ao aparecer.
+/// Em telas largas fica com largura fixa e centralizado.
 void toast(BuildContext context, String message, {bool error = false}) {
   final ac = context.ac;
+  final color = error ? ac.danger : ac.success;
+  final wide = MediaQuery.sizeOf(context).width >= AtlasBreakpoints.phone;
+  final reduce = context.reduceMotion;
   ScaffoldMessenger.of(context)
     ..clearSnackBars()
     ..showSnackBar(
       SnackBar(
+        width: wide ? 440 : null,
+        duration: Duration(seconds: error ? 5 : 3),
         content: Row(
           children: [
-            Icon(
-              error ? Icons.error_rounded : Icons.check_circle_rounded,
-              color: error ? ac.danger : ac.success,
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: reduce ? 1.0 : 0.4, end: 1.0),
+              duration: reduce ? Duration.zero : AtlasMotion.slow,
+              curve: AtlasMotion.pop,
+              builder: (_, s, child) => Transform.scale(scale: s, child: child),
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withValues(alpha: 0.18),
+                ),
+                child: Icon(
+                  error ? Icons.error_rounded : Icons.check_rounded,
+                  color: color,
+                  size: 18,
+                ),
+              ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(child: Text(message)),
           ],
         ),
@@ -479,22 +702,27 @@ class SectionHeader extends StatelessWidget {
     final ac = context.ac;
     return LayoutBuilder(
       builder: (context, constraints) {
+        final small = constraints.maxWidth < 560;
         final heading = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: constraints.maxWidth < 560 ? 21 : 24,
+                fontSize: small ? 21 : 25,
                 fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.2,
               ),
             ),
-            if (subtitle != null)
-              Text(subtitle!, style: TextStyle(color: ac.muted)),
+            if (subtitle != null) ...[
+              const SizedBox(height: 4),
+              Text(subtitle!, style: TextStyle(color: ac.muted, height: 1.4)),
+            ],
           ],
         );
         if (trailing == null) return heading;
-        if (constraints.maxWidth < 560) {
+        if (small) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -508,6 +736,7 @@ class SectionHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(child: heading),
+            const SizedBox(width: 16),
             trailing!,
           ],
         );
