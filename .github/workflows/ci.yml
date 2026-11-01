@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # temporário: publicar o preview em preview-web
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -46,9 +46,13 @@ jobs:
       - name: Build web
         run: flutter build web --release
 
-      - name: Upload web build (preview)
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-preview
-          path: build/web
-          retention-days: 7
+      - name: Publish preview build (temporário)
+        if: github.ref == 'refs/heads/redesign-3d'
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd build/web
+          git init -q -b preview-web
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "preview ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" preview-web
