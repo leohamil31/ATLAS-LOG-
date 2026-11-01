@@ -564,7 +564,6 @@ ThemeData buildTheme({required bool dark, bool webFonts = true}) {
         borderRadius: BorderRadius.circular(AtlasRadius.pill),
       ),
       elevation: 0,
-      height: 68,
       labelTextStyle: WidgetStateProperty.resolveWith(
         (s) => TextStyle(
           fontSize: 12,
