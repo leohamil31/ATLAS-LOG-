@@ -251,7 +251,7 @@ class _LoginPageState extends State<_LoginPage> {
           border: Border.all(color: colors.border),
           boxShadow: AtlasShadows.glow(colors.accent2, strength: 0.6),
         ),
-        child: AtlasLogo3D(size: mobile ? 60 : 76),
+        child: AtlasLogo3D(size: mobile ? 60 : 76, sway: true),
       ),
       SizedBox(height: mobile ? 16 : 22),
       ShaderMask(
@@ -440,7 +440,7 @@ class _Splash extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FadeSlideIn(scale: 0.9, child: AtlasLogo3D(size: 64)),
+          FadeSlideIn(scale: 0.9, child: AtlasLogo3D(size: 64, sway: true)),
           SizedBox(height: 22),
           SizedBox(
             width: 120,

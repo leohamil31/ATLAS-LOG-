@@ -85,6 +85,24 @@ class Glass extends StatelessWidget {
       ),
     );
 
+    // Expo Glass: reflexo especular no topo da superfície.
+    surface = DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        borderRadius: shape,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withValues(alpha: ac.dark ? 0.10 : 0.45),
+            Colors.white.withValues(alpha: 0),
+          ],
+          stops: const [0, 0.32],
+        ),
+      ),
+      child: surface,
+    );
+
     if (blur > 0) {
       surface = BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),

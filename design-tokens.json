@@ -2,35 +2,35 @@
   "$description": "ATLAS LOG design tokens — fonte da verdade: lib/core/theme.dart (AtlasColors, AtlasRadius, AtlasMotion, AtlasBreakpoints, AtlasLight). Cores com 8 dígitos = #RRGGBBAA.",
   "color": {
     "light": {
-      "bg": "#F3F5FB",
+      "bg": "#F3F6F9",
       "surface": "#FFFFFF",
       "card": "#FFFFFF",
-      "border": "#E3E7F1",
-      "text": "#151A2D",
-      "muted": "#5E6683",
-      "accent": "#4F46E5",
-      "accent2": "#4F46E5",
-      "accent3": "#7C3AED",
+      "border": "#E1E8EF",
+      "text": "#0E1E33",
+      "muted": "#5A6B80",
+      "accent": "#0E5A9C",
+      "accent2": "#1F6FA8",
+      "accent3": "#2BB3B1",
       "success": "#0F8A5F",
       "warning": "#B45309",
       "danger": "#C0262D",
       "glass": "#FFFFFFC7",
-      "shadow": "#283373"
+      "shadow": "#0E3A6B"
     },
     "dark": {
-      "bg": "#080B18",
-      "surface": "#111631",
-      "card": "#141A38",
-      "border": "#252D55",
-      "text": "#F1F3FF",
-      "muted": "#9AA3C7",
-      "accent": "#8B93FF",
-      "accent2": "#6366F1",
-      "accent3": "#9F55F5",
+      "bg": "#06111E",
+      "surface": "#0C1C2E",
+      "card": "#0F2236",
+      "border": "#1C3550",
+      "text": "#EEF4FA",
+      "muted": "#8FA6BF",
+      "accent": "#6FD3CB",
+      "accent2": "#2B7BC0",
+      "accent3": "#2BB3B1",
       "success": "#34D399",
       "warning": "#FBBF24",
       "danger": "#F87171",
-      "glass": "#141A38A6",
+      "glass": "#0F2236A6",
       "shadow": "#000000"
     }
   },
@@ -39,12 +39,12 @@
     "sheen": "linear-gradient(180deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 55%)"
   },
   "radius": {
-    "xs": 6.0,
-    "sm": 10.0,
-    "md": 14.0,
-    "lg": 18.0,
-    "xl": 24.0,
-    "pill": 999.0
+    "xs": 6,
+    "sm": 10,
+    "md": 14,
+    "lg": 18,
+    "xl": 24,
+    "pill": 999
   },
   "motion": {
     "duration_ms": {
@@ -62,10 +62,10 @@
     }
   },
   "breakpoints": {
-    "phone": 600.0,
-    "tablet": 940.0,
-    "desktop": 1100.0,
-    "contentMax": 1480.0
+    "phone": 600,
+    "tablet": 940,
+    "desktop": 1100,
+    "contentMax": 1480
   },
   "light": {
     "direction": "top-left",
@@ -81,5 +81,18 @@
     "body": {
       "weight": 400
     }
+  },
+  "brand": {
+    "navy": "#0E3A6B",
+    "navyDeep": "#0A2A4F",
+    "blue": "#1F6FA8",
+    "teal": "#2BB3B1",
+    "tealLight": "#5FD0C8",
+    "tagline": "CONNECTING THE WORLD"
+  },
+  "glass": {
+    "blur": "16-18px",
+    "specular": "linear-gradient(180deg, rgba(255,255,255,.45) 0%, transparent 32%) — .10 no escuro",
+    "border": "white .85 (claro) / .08 (escuro) + hairline border"
   }
 }

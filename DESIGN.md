@@ -71,3 +71,18 @@ Read colors with `context.ac`, as before.
 4. Give list items a `ValueKey(id)` so filtering or paging animates only the items that change. For lists that also need exit animations, use `AnimatedItems`.
 5. Use `AtlasLight` for highlights and shadows instead of loose colours. If the light comes from different directions, the depth breaks.
 6. Use `Tilt3D` only on clickable elements. Tilt tells the user "this does something".
+
+## Marca e Expo Glass (rodada 3)
+
+**Logo novo (`widgets/atlas_logo_3d.dart`).** Mesma API (`size`, `showWordmark`, `extrude`, `interactive`) + novo `sway`.
+
+- Desenho: "A" lapidado (cada perna com face escura e face clara) atravessado por uma flecha que sobe para a direita. Onde a flecha cruza o "A" há um recorte real (`BlendMode.clear`).
+- Movimento: entrada girando em Y (1,1 s, easeOutCubic) → reflexo de luz (1,4 s) → `sway` opcional (balanço de ±18° em 10 s). Hover repete o reflexo; ≥ 56 px inclina com o ponteiro (`Tilt3D`).
+- `sway: true` está ligado no login, na tela de carregamento e na galeria. Menu lateral fica sem balanço.
+- Wordmark: **ATLAS** (marinho / branco no escuro) + **LOG** (verde-azulado), legenda "CONNECTING THE WORLD".
+
+**Paleta da marca** (`AtlasColors`, `design-tokens.json → brand`): marinho `#0E3A6B`, azul `#1F6FA8`, verde-azulado `#2BB3B1`. O violeta anterior saiu dos dois temas.
+
+**Expo Glass.** Todo `Glass` (barras, painéis, diálogos, paleta de comandos) ganhou reflexo especular no topo (branco 45% → 0 em 32% da altura; 10% no escuro), somado ao blur e à borda clara que já existiam.
+
+**Web.** `favicon.png`, `Icon-192/512`, `Icon-maskable-192/512` e `atlas-logo.svg` agora usam a marca nova. `theme_color` = `#0E3A6B`.

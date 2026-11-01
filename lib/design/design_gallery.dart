@@ -108,7 +108,7 @@ class _DesignGalleryPageState extends State<DesignGalleryPage> {
                 runSpacing: 20,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  AtlasLogo3D(size: 120),
+                  AtlasLogo3D(size: 120, sway: true),
                   AtlasLogo3D(size: 64),
                   AtlasLogo3D(size: 36, showWordmark: true),
                   AtlasLogo3D(size: 24, extrude: false),

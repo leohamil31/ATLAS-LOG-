@@ -87,37 +87,37 @@ class AtlasColors extends ThemeExtension<AtlasColors> {
 
   static const lightPalette = AtlasColors(
     dark: false,
-    bg: Color(0xFFF3F5FB),
+    bg: Color(0xFFF3F6F9),
     surface: Color(0xFFFFFFFF),
     card: Color(0xFFFFFFFF),
-    border: Color(0xFFE3E7F1),
-    text: Color(0xFF151A2D),
-    muted: Color(0xFF5E6683),
-    accent: Color(0xFF4F46E5),
-    accent2: Color(0xFF4F46E5),
-    accent3: Color(0xFF7C3AED),
+    border: Color(0xFFE1E8EF),
+    text: Color(0xFF0E1E33),
+    muted: Color(0xFF5A6B80),
+    accent: Color(0xFF0E5A9C),
+    accent2: Color(0xFF1F6FA8),
+    accent3: Color(0xFF2BB3B1),
     success: Color(0xFF0F8A5F),
     warning: Color(0xFFB45309),
     danger: Color(0xFFC0262D),
     glass: Color(0xC7FFFFFF), // ~78%
-    shadow: Color(0xFF283373),
+    shadow: Color(0xFF0E3A6B),
   );
 
   static const darkPalette = AtlasColors(
     dark: true,
-    bg: Color(0xFF080B18),
-    surface: Color(0xFF111631),
-    card: Color(0xFF141A38),
-    border: Color(0xFF252D55),
-    text: Color(0xFFF1F3FF),
-    muted: Color(0xFF9AA3C7),
-    accent: Color(0xFF8B93FF),
-    accent2: Color(0xFF6366F1),
-    accent3: Color(0xFF9F55F5),
+    bg: Color(0xFF06111E),
+    surface: Color(0xFF0C1C2E),
+    card: Color(0xFF0F2236),
+    border: Color(0xFF1C3550),
+    text: Color(0xFFEEF4FA),
+    muted: Color(0xFF8FA6BF),
+    accent: Color(0xFF6FD3CB),
+    accent2: Color(0xFF2B7BC0),
+    accent3: Color(0xFF2BB3B1),
     success: Color(0xFF34D399),
     warning: Color(0xFFFBBF24),
     danger: Color(0xFFF87171),
-    glass: Color(0xA6141A38), // ~65%
+    glass: Color(0xA60F2236), // ~65%
     shadow: Color(0xFF000000),
   );
 
@@ -534,7 +534,7 @@ ThemeData buildTheme({required bool dark, bool webFonts = true}) {
     tooltipTheme: TooltipThemeData(
       waitDuration: const Duration(milliseconds: 350),
       decoration: BoxDecoration(
-        color: dark ? const Color(0xFF242B52) : const Color(0xFF151A2D),
+        color: dark ? const Color(0xFF1C3550) : const Color(0xFF0E1E33),
         borderRadius: BorderRadius.circular(AtlasRadius.xs),
       ),
       textStyle: const TextStyle(
@@ -546,7 +546,7 @@ ThemeData buildTheme({required bool dark, bool webFonts = true}) {
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       elevation: 0,
-      backgroundColor: dark ? const Color(0xFF1B2247) : const Color(0xFF151A2D),
+      backgroundColor: dark ? const Color(0xFF15304A) : const Color(0xFF0E1E33),
       contentTextStyle: const TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.w600,
