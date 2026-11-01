@@ -10,7 +10,15 @@ import 'widgets/atlas_logo_3d.dart';
 import 'widgets/button3d.dart';
 import 'widgets/common.dart';
 
+/// Rota pedida na URL ao abrir o app (ex.: `/rastreio?codigo=ATL-2400`,
+/// `/design`). Precisa ser lida em `main()`, ANTES do runApp: depois que o
+/// Flutter inicializa, o navegador é reescrito para `/` e
+/// `Uri.base.fragment` perde a rota. (Variável global `final` seria lida
+/// tarde demais — no Dart ela só inicializa no primeiro acesso.)
+String? _initialRoute;
+
 void main() {
+  _initialRoute = Uri.base.fragment;
   runApp(const AtlasLogApp());
 }
 
@@ -83,7 +91,8 @@ class _AtlasLogAppState extends State<AtlasLogApp> {
       );
     }
 
-    final route = Uri.base.fragment;
+    // Testes criam o app sem passar por main(): cai no Uri.base.
+    final route = _initialRoute ?? Uri.base.fragment;
     final routeUri = Uri.tryParse(route);
     final publicTracking = routeUri?.path == '/rastreio';
     final trackingCode = routeUri?.queryParameters['codigo'] ?? '';
