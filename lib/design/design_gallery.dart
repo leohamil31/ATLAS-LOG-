@@ -117,8 +117,8 @@ class _DesignGalleryPageState extends State<DesignGalleryPage> {
             ),
             _section(
               context,
-              'Botões — Button3D',
-              'MOTION-HOOK[button]: tecla física. Hover sobe, clique afunda; ação assíncrona → spinner → ✓.',
+              'Botões — Button3D (vidro)',
+              'MOTION-HOOK[button]: tecla com face de vidro (blur + translucidez + reflexo). Hover sobe, clique afunda; ação assíncrona → spinner → ✓. Os dois últimos usam glass: false para comparar.',
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
@@ -153,6 +153,17 @@ class _DesignGalleryPageState extends State<DesignGalleryPage> {
                   ),
                   Button3D(label: 'Compacto', compact: true, onPressed: () {}),
                   const Button3D(label: 'Desabilitado'),
+                  Button3D(
+                    label: 'Sólido (glass: false)',
+                    glass: false,
+                    onPressed: () {},
+                  ),
+                  Button3D(
+                    label: 'Secundário sólido',
+                    secondary: true,
+                    glass: false,
+                    onPressed: () {},
+                  ),
                   FilledButton(onPressed: () {}, child: const Text('Filled')),
                   OutlinedButton(
                     onPressed: () {},
@@ -164,8 +175,8 @@ class _DesignGalleryPageState extends State<DesignGalleryPage> {
             ),
             _section(
               context,
-              'Ícones — Icon3D',
-              'Ladrilho iluminado (≥ 40 px). Cada um mostra um movimento; passe o mouse para tocar de novo.',
+              'Ícones — Icon3D (vidro)',
+              'Ladrilho de vidro fosco (≥ 40 px). Cada um mostra um movimento; passe o mouse para tocar de novo. O último usa glass: false para comparar.',
               Wrap(
                 spacing: 18,
                 runSpacing: 18,
@@ -206,6 +217,21 @@ class _DesignGalleryPageState extends State<DesignGalleryPage> {
                       const SizedBox(height: 6),
                       Text(
                         'loop',
+                        style: TextStyle(color: c.muted, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Icon3D(
+                        icon: Icons.inventory_2_rounded,
+                        color: c.accent,
+                        size: 56,
+                        glass: false,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'sólido',
                         style: TextStyle(color: c.muted, fontSize: 11),
                       ),
                     ],

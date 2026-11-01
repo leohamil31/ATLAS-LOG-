@@ -90,6 +90,15 @@ grep -rn "DESIGN-SLOT\|MOTION-HOOK\|DATA-BOUNDARY" lib
 **Movimento:** `page-switch`, `palette`, `stagger`, `list` (entrada e saída),
 `dialog`, `tilt`, `count-up`, `button` e `chat`.
 
+## Efeito de vidro (Expo Glass)
+
+O efeito de vidro está aplicado em painéis e diálogos (`Glass`), nos
+**ícones** (`Icon3D`) e nos **botões** (`Button3D`). No Flutter não existe
+`expo-glass-effect`, então o vidro é feito com `BackdropFilter`, preenchimento
+translúcido, borda clara, reflexo no topo e luz de borda embaixo. Veja a seção
+"Vidro em ícones e botões" no `DESIGN.md`. Para usar o visual sólido, passe
+`glass: false`.
+
 ## Regras do sistema visual
 
 1. **Cores, raios, durações e sombras vêm de `theme.dart`.** Não use cores

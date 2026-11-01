@@ -1,10 +1,16 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
 
 enum IconMotion { spin, drive, tilt, pulse, pop, bounce }
 
-/// Ícone com ladrilho iluminado (a partir de 40 px) e micro-movimento.
+/// Ícone com ladrilho de VIDRO FOSCO (a partir de 40 px) e micro-movimento.
+///
+/// Vidro (padrão, `glass: true`): desfoque do fundo + branco translúcido
+/// tingido pela cor do ícone + borda clara + reflexo no topo + luz de borda
+/// embaixo — o equivalente Flutter do "Liquid Glass" (expo-glass-effect).
 ///
 /// Iluminação: gradiente de volume + reflexo especular no topo + sombra
 /// colorida que cresce no hover (o ladrilho "sobe" 2 px).
@@ -24,6 +30,7 @@ class Icon3D extends StatefulWidget {
     this.animate = false,
     this.loop = false,
     this.muted = false,
+    this.glass = true,
   });
 
   final IconData icon;
@@ -33,6 +40,10 @@ class Icon3D extends StatefulWidget {
   final bool animate;
   final bool loop;
   final bool muted;
+
+  /// Ladrilho de vidro fosco (blur + translucidez + reflexo). Desligue em
+  /// listas muito longas: cada ladrilho de vidro custa um BackdropFilter.
+  final bool glass;
 
   @override
   State<Icon3D> createState() => _Icon3DState();
@@ -150,6 +161,103 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
 
     final radius = BorderRadius.circular(s * 0.3);
     final lift = _hover && !_reduce;
+    final dark = ac.dark;
+    final glass = widget.glass;
+
+    // Corpo do ladrilho.
+    // * vidro: branco translúcido levemente tingido pela cor do ícone, sobre
+    //   o desfoque do que está atrás (BackdropFilter);
+    // * sólido: volume tingido (comportamento anterior).
+    final body = BoxDecoration(
+      borderRadius: radius,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: glass
+            ? [
+                Color.alphaBlend(
+                  iconColor.withValues(alpha: dark ? 0.22 : 0.12),
+                  Colors.white.withValues(alpha: dark ? 0.12 : 0.62),
+                ),
+                Color.alphaBlend(
+                  iconColor.withValues(alpha: dark ? 0.12 : 0.08),
+                  Colors.white.withValues(alpha: dark ? 0.04 : 0.28),
+                ),
+              ]
+            : [
+                iconColor.withValues(alpha: dark ? 0.34 : 0.20),
+                iconColor.withValues(alpha: dark ? 0.14 : 0.07),
+              ],
+      ),
+      border: Border.all(
+        color: glass
+            ? Colors.white.withValues(alpha: dark ? 0.18 : 0.75)
+            : iconColor.withValues(alpha: dark ? 0.32 : 0.18),
+      ),
+    );
+
+    Widget tile = DecoratedBox(
+      decoration: body,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Reflexo especular: elipse clara na metade superior.
+          Positioned(
+            left: s * 0.08,
+            right: s * 0.08,
+            top: s * 0.05,
+            height: s * 0.42,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(s * 0.24),
+                    bottom: Radius.circular(s * 0.4),
+                  ),
+                  gradient: AtlasLight.sheen(
+                    strength: glass ? 1.2 : 0.9,
+                    dark: dark,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Luz de borda inferior (refração do vidro), só no modo vidro.
+          if (glass)
+            Positioned(
+              left: s * 0.18,
+              right: s * 0.18,
+              bottom: s * 0.04,
+              height: s * 0.18,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(s * 0.2),
+                    gradient: RadialGradient(
+                      colors: [
+                        iconColor.withValues(alpha: dark ? 0.45 : 0.30),
+                        iconColor.withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          Center(child: animated),
+        ],
+      ),
+    );
+
+    if (glass) {
+      tile = ClipRRect(
+        borderRadius: radius,
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: tile,
+        ),
+      );
+    }
+
     return MouseRegion(
       onEnter: (_) {
         setState(() => _hover = true);
@@ -164,18 +272,6 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
         transform: Matrix4.translationValues(0, lift ? -2 : 0, 0),
         decoration: BoxDecoration(
           borderRadius: radius,
-          // Corpo do ladrilho: volume tingido pela cor do ícone.
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              iconColor.withValues(alpha: ac.dark ? 0.34 : 0.20),
-              iconColor.withValues(alpha: ac.dark ? 0.14 : 0.07),
-            ],
-          ),
-          border: Border.all(
-            color: iconColor.withValues(alpha: ac.dark ? 0.32 : 0.18),
-          ),
           boxShadow: [
             BoxShadow(
               color: iconColor.withValues(alpha: lift ? 0.34 : 0.18),
@@ -185,33 +281,7 @@ class _Icon3DState extends State<Icon3D> with SingleTickerProviderStateMixin {
             ),
           ],
         ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Reflexo especular: elipse clara na metade superior.
-            Positioned(
-              left: s * 0.08,
-              right: s * 0.08,
-              top: s * 0.05,
-              height: s * 0.42,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(s * 0.24),
-                      bottom: Radius.circular(s * 0.4),
-                    ),
-                    gradient: AtlasLight.sheen(
-                      strength: 0.9,
-                      dark: ac.dark,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Center(child: animated),
-          ],
-        ),
+        child: tile,
       ),
     );
   }

@@ -86,3 +86,20 @@ Read colors with `context.ac`, as before.
 **Expo Glass.** Todo `Glass` (barras, painéis, diálogos, paleta de comandos) ganhou reflexo especular no topo (branco 45% → 0 em 32% da altura; 10% no escuro), somado ao blur e à borda clara que já existiam.
 
 **Web.** `favicon.png`, `Icon-192/512`, `Icon-maskable-192/512` e `atlas-logo.svg` agora usam a marca nova. `theme_color` = `#0E3A6B`.
+
+## Vidro em ícones e botões (rodada 4)
+
+`expo-glass-effect` é uma biblioteca do Expo (React Native) para o Liquid Glass do iOS e não existe no Flutter. Aqui o mesmo material é feito com primitivas do Flutter, no mesmo padrão do `Glass`:
+
+| Camada | Como |
+|---|---|
+| Desfoque do fundo | `BackdropFilter(ImageFilter.blur)` recortado no formato (`ClipRRect`) |
+| Corpo translúcido | branco translúcido (ícone e botão secundário) ou gradiente da marca a 80% (botão primário) |
+| Borda clara | `Border` branca semitransparente |
+| Reflexo no topo | gradiente branco → transparente (`foregroundDecoration`) |
+| Luz de borda embaixo | brilho fraco na base, que simula a refração |
+
+- **`Icon3D(glass: true)`** (padrão): ladrilho de vidro fosco levemente tingido pela cor do ícone, com uma luz colorida na base.
+- **`Button3D(glass: true)`** (padrão): a face da tecla é de vidro; a lateral fica translúcida, como a espessura do vidro. Hover sobe e clique afunda, como antes.
+- Use `glass: false` para voltar ao visual sólido, por exemplo em listas muito longas, já que cada vidro custa um `BackdropFilter`.
+- A galeria `/#/design` mostra as versões de vidro e sólida lado a lado.

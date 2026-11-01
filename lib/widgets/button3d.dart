@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -6,7 +7,11 @@ import '../core/theme.dart';
 
 enum _Phase { idle, loading, success }
 
-/// Botão principal do ATLAS LOG, construído como uma tecla física.
+/// Botão principal do ATLAS LOG: tecla física com face de VIDRO.
+///
+/// Vidro (padrão, `glass: true`): face translúcida sobre o fundo desfocado
+/// (BackdropFilter), borda clara, reflexo no topo e luz de borda embaixo —
+/// o equivalente Flutter do "Liquid Glass" (expo-glass-effect).
 ///
 /// * face iluminada (gradiente de marca + reflexo) sobre uma borda escura;
 /// * hover: a face sobe 1 px e o halo cresce; press: a face afunda na borda;
@@ -24,6 +29,7 @@ class Button3D extends StatefulWidget {
     this.secondary = false,
     this.compact = false,
     this.successLabel,
+    this.glass = true,
   });
 
   final String label;
@@ -33,6 +39,10 @@ class Button3D extends StatefulWidget {
   final Color? color;
   final bool secondary;
   final bool compact;
+
+  /// Face de vidro (blur + translucidez + borda clara + reflexo e luz de
+  /// borda). `false` volta à tecla sólida.
+  final bool glass;
   final String? successLabel;
 
   @override
@@ -157,39 +167,75 @@ class _Button3DState extends State<Button3D> {
         : AtlasLight.edge(base);
     final faceRadius = radius;
 
-    final face = AnimatedContainer(
+    final glass = widget.glass;
+    final dark = colors.dark;
+
+    // Vidro primário: o mesmo gradiente, mas translúcido (deixa o fundo
+    // desfocado aparecer). Vidro secundário: branco fosco.
+    final faceGradient = !secondary && gradient != null && glass
+        ? LinearGradient(
+            begin: gradient.begin,
+            end: gradient.end,
+            colors: [for (final c in gradient.colors) c.withValues(alpha: 0.80)],
+          )
+        : gradient;
+    final Color? faceColor = !secondary
+        ? null
+        : glass
+        ? Colors.white.withValues(
+            alpha: dark ? (active ? 0.14 : 0.08) : (active ? 0.72 : 0.55),
+          )
+        : (active
+              ? Color.alphaBlend(
+                  colors.accent2.withValues(alpha: 0.06),
+                  colors.surface,
+                )
+              : colors.surface);
+    final Color borderColor = _focused
+        ? colors.accent
+        : glass
+        ? Colors.white.withValues(
+            alpha: secondary
+                ? (dark ? 0.18 : 0.85)
+                : (active ? 0.45 : 0.30),
+          )
+        : secondary
+        ? (active ? colors.accent2.withValues(alpha: 0.5) : colors.border)
+        : Colors.white.withValues(alpha: 0.18);
+
+    // Reflexo no topo (mais forte no hover, some ao pressionar) e, no vidro,
+    // uma luz de borda embaixo — a "refração" que vende o material.
+    final sheenTop = Colors.white.withValues(
+      alpha: (dark || secondary ? 0.16 : 0.34) *
+          (down ? 0.2 : (active ? 1.0 : 0.7)) *
+          (glass ? 1.3 : 1.0),
+    );
+    final sheen = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: glass
+          ? [
+              sheenTop,
+              Colors.white.withValues(alpha: 0),
+              Colors.white.withValues(alpha: 0),
+              Colors.white.withValues(alpha: dark ? 0.10 : 0.22),
+            ]
+          : [sheenTop, Colors.white.withValues(alpha: 0)],
+      stops: glass ? const [0, 0.5, 0.8, 1] : const [0, 0.55],
+    );
+
+    Widget faceBody = AnimatedContainer(
       duration: down ? AtlasMotion.instant : fast,
       curve: AtlasMotion.standard,
-      transform: Matrix4.translationValues(0, faceY, 0),
       decoration: BoxDecoration(
         borderRadius: faceRadius,
-        gradient: secondary ? null : gradient,
-        color: secondary
-            ? (active
-                  ? Color.alphaBlend(
-                      colors.accent2.withValues(alpha: 0.06),
-                      colors.surface,
-                    )
-                  : colors.surface)
-            : null,
-        border: Border.all(
-          color: _focused
-              ? colors.accent
-              : secondary
-              ? (active
-                    ? colors.accent2.withValues(alpha: 0.5)
-                    : colors.border)
-              : Colors.white.withValues(alpha: 0.18),
-          width: _focused ? 2 : 1,
-        ),
+        gradient: secondary ? null : faceGradient,
+        color: faceColor,
+        border: Border.all(color: borderColor, width: _focused ? 2 : 1),
       ),
       foregroundDecoration: BoxDecoration(
         borderRadius: faceRadius,
-        // Reflexo no topo da tecla (mais forte no hover, some ao pressionar).
-        gradient: AtlasLight.sheen(
-          strength: down ? 0.2 : (active ? 1 : 0.7),
-          dark: colors.dark || secondary,
-        ),
+        gradient: sheen,
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -213,6 +259,23 @@ class _Button3DState extends State<Button3D> {
       ),
     );
 
+    if (glass) {
+      faceBody = ClipRRect(
+        borderRadius: faceRadius,
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: faceBody,
+        ),
+      );
+    }
+
+    final face = AnimatedContainer(
+      duration: down ? AtlasMotion.instant : fast,
+      curve: AtlasMotion.standard,
+      transform: Matrix4.translationValues(0, faceY, 0),
+      child: faceBody,
+    );
+
     return AnimatedOpacity(
       opacity: _enabled || _phase != _Phase.idle ? 1 : 0.5,
       duration: fast,
@@ -221,7 +284,10 @@ class _Button3DState extends State<Button3D> {
         curve: AtlasMotion.standard,
         decoration: BoxDecoration(
           borderRadius: radius,
-          color: edgeColor,
+          // No vidro a lateral também é translúcida (espessura de vidro).
+          color: widget.glass
+              ? edgeColor.withValues(alpha: secondary ? 0.45 : 0.6)
+              : edgeColor,
           boxShadow: down
               ? AtlasLight.elevation(
                   secondary ? colors.shadow : base,
