@@ -1,0 +1,26 @@
+{
+    "name": "ATLAS LOG | Gestão logística",
+    "short_name": "ATLAS LOG",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#F3F6F9",
+    "theme_color": "#0E3A6B",
+    "description": "ATLAS LOG — gestão logística, rastreamento e operação de frota.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/atlas-logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/atlas-logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "maskable"
+        }
+    ]
+}
