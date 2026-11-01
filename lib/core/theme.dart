@@ -608,7 +608,7 @@ ThemeData buildTheme({required bool dark, bool webFonts = true}) {
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
         TargetPlatform.android: AtlasPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: AtlasPageTransitionsBuilder(),
         TargetPlatform.macOS: AtlasPageTransitionsBuilder(),
         TargetPlatform.windows: AtlasPageTransitionsBuilder(),
         TargetPlatform.linux: AtlasPageTransitionsBuilder(),

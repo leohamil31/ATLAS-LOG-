@@ -589,7 +589,7 @@ class _AnimatedItemsState<T> extends State<AnimatedItems<T>>
     if (e.grow) {
       child = SizeTransition(
         sizeFactor: a,
-        axisAlignment: -1,
+        alignment: Alignment.topCenter,
         child: child,
       );
     }

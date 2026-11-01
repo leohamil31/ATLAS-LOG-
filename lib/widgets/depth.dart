@@ -42,19 +42,19 @@ class _Tilt3DState extends State<Tilt3D> {
   Offset _pointer = Offset.zero;
   bool _hover = false;
 
-  void _onHover(PointerHoverEvent e) {
+  void _onHover(Offset local) {
     final size = context.size;
     if (size == null || size.isEmpty) return;
     setState(() {
       _hover = true;
       _pointer = Offset(
-        (e.localPosition.dx / size.width * 2 - 1).clamp(-1.0, 1.0),
-        (e.localPosition.dy / size.height * 2 - 1).clamp(-1.0, 1.0),
+        (local.dx / size.width * 2 - 1).clamp(-1.0, 1.0),
+        (local.dy / size.height * 2 - 1).clamp(-1.0, 1.0),
       );
     });
   }
 
-  void _onExit(PointerExitEvent _) => setState(() {
+  void _onExit() => setState(() {
     _hover = false;
     _pointer = Offset.zero;
   });
@@ -65,8 +65,8 @@ class _Tilt3DState extends State<Tilt3D> {
     final dark = context.ac.dark;
 
     return MouseRegion(
-      onHover: _onHover,
-      onExit: _onExit,
+      onHover: (e) => _onHover(e.localPosition),
+      onExit: (_) => _onExit(),
       child: TweenAnimationBuilder<Offset>(
         // O tween anima do valor atual até o novo alvo a cada movimento:
         // o card "persegue" o cursor com suavidade em vez de pular.
